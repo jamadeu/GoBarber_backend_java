@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +46,15 @@ public class UserController {
         return new ResponseEntity<>(userService.findByIdOrThrowBadRequestException(id), HttpStatus.OK);
     }
 
+    @GetMapping(path = "/providers-all")
+    @Operation(summary = "Lists all users who are providers",
+            description = "The default size is 5, use the parameter to change the default value",
+            tags = {"users"}
+    )
+    public ResponseEntity<Page<User>> listAllProviders(@ParameterObject Pageable pageable) {
+        return new ResponseEntity<>(userService.listAllProviders(pageable), HttpStatus.OK);
+    }
+
     @PostMapping
     @Transactional
     @Operation(summary = "Create a new user",
@@ -60,5 +70,6 @@ public class UserController {
     public ResponseEntity<User> save(@RequestBody @Valid NewUserRequest newUserRequest) {
         return new ResponseEntity<>(userService.save(newUserRequest), HttpStatus.CREATED);
     }
+
 
 }

@@ -25,6 +25,10 @@ public class UserService {
         );
     }
 
+    public Page<User> listAllProviders(Pageable pageable) {
+        return userRepository.findByIsProviderTrue(pageable);
+    }
+
     @Transactional
     public User save(NewUserRequest newUserRequest) {
         return userRepository.save(newUserRequest.toUser(userRepository));
