@@ -40,7 +40,9 @@ public class UserService {
         userRepository.save(replaceUserRequest.toUser(userRepository));
     }
 
+    @Transactional
     public void delete(Long id) {
         userRepository.delete(this.findByIdOrThrowBadRequestException(id));
     }
+
 }
