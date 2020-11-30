@@ -11,10 +11,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.transaction.Transactional;
 
 
 @RestController
@@ -42,6 +41,22 @@ public class UserController {
     })
     public ResponseEntity<User> findById(@PathVariable long id) {
         return new ResponseEntity<>(userService.findByIdOrThrowBadRequestException(id), HttpStatus.OK);
+    }
+
+    @PostMapping
+    @Transactional
+    @Operation(summary = "Create a new user",
+            description = "Name, email and password fields are mandatory, " +
+                    "password field must have at least 6 characters," +
+                    "email must be unique",
+            tags = {"users"}
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Successful operation"),
+            @ApiResponse(responseCode = "400", description = "When there is an error with some mandatory field")
+    })
+    public ResponseEntity<User> save() {
+
     }
 
 }
