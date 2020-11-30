@@ -27,7 +27,6 @@ public class UserCreator {
                 .name("User")
                 .email("provider@gobarber.com")
                 .password("123123")
-                .isProvider(true)
                 .build();
     }
 
