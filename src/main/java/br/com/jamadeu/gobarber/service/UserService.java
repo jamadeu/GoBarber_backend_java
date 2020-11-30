@@ -4,6 +4,7 @@ import br.com.jamadeu.gobarber.domain.User;
 import br.com.jamadeu.gobarber.exception.BadRequestException;
 import br.com.jamadeu.gobarber.repository.UserRepository;
 import br.com.jamadeu.gobarber.requests.NewUserRequest;
+import br.com.jamadeu.gobarber.requests.ReplaceUserRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,5 +33,10 @@ public class UserService {
     @Transactional
     public User save(NewUserRequest newUserRequest) {
         return userRepository.save(newUserRequest.toUser(userRepository));
+    }
+
+    @Transactional
+    public void replace(ReplaceUserRequest replaceUserRequest) {
+        userRepository.save(replaceUserRequest.toUser(userRepository));
     }
 }

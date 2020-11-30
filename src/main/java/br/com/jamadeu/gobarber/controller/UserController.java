@@ -2,6 +2,7 @@ package br.com.jamadeu.gobarber.controller;
 
 import br.com.jamadeu.gobarber.domain.User;
 import br.com.jamadeu.gobarber.requests.NewUserRequest;
+import br.com.jamadeu.gobarber.requests.ReplaceUserRequest;
 import br.com.jamadeu.gobarber.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -9,7 +10,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -69,6 +69,20 @@ public class UserController {
     })
     public ResponseEntity<User> save(@RequestBody @Valid NewUserRequest newUserRequest) {
         return new ResponseEntity<>(userService.save(newUserRequest), HttpStatus.CREATED);
+    }
+
+    @PutMapping
+    @Operation(summary = "Replace an existing user",
+            description = "Replaces an existing user with the informed user keeping the id",
+            tags = {"users"}
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Successful operation"),
+            @ApiResponse(responseCode = "400", description = "When user not found")
+    })
+    public ResponseEntity<User> replace(@RequestBody @Valid ReplaceUserRequest replaceUserRequest) {
+        userService.replace(replaceUserRequest);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 
