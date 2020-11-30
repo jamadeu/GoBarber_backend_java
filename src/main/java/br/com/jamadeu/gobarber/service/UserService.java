@@ -39,4 +39,8 @@ public class UserService {
     public void replace(ReplaceUserRequest replaceUserRequest) {
         userRepository.save(replaceUserRequest.toUser(userRepository));
     }
+
+    public void delete(Long id) {
+        userRepository.delete(this.findByIdOrThrowBadRequestException(id));
+    }
 }

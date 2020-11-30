@@ -73,7 +73,6 @@ public class UserController {
 
     @PutMapping
     @Operation(summary = "Replace an existing user",
-            description = "Replaces an existing user with the informed user keeping the id",
             tags = {"users"}
     )
     @ApiResponses({
@@ -85,5 +84,14 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-
+    @DeleteMapping(path = "/{id}")
+    @Operation(summary = "Delete an existing user")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Successful operation"),
+            @ApiResponse(responseCode = "400", description = "When user not found")
+    })
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        userService.delete(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
