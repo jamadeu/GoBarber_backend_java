@@ -1,45 +1,48 @@
-package br.com.jamadeu.gobarber.domain;
+package br.com.jamadeu.gobarber.requests;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import br.com.jamadeu.gobarber.domain.User;
+import br.com.jamadeu.gobarber.exception.BadRequestException;
+import br.com.jamadeu.gobarber.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.time.LocalDateTime;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-@Entity
-@Table(name = "users")
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class NewUserRequest {
     @NotEmpty(message = "The user name can not be empty")
-    @Column(nullable = false)
     private String name;
 
     @NotEmpty(message = "The user email can not be empty")
     @Email(message = "The user email must be in a valid email format")
-    @Column(nullable = false, unique = true)
     private String email;
 
     @NotEmpty(message = "The user password can not be empty")
     @Size(min = 6, message = "The user password must be at least 6 characters")
-    @Column(nullable = false)
     private String password;
 
-    @Column(columnDefinition = "boolean default false")
     private boolean isProvider;
 
     private String avatar;
 
+    public User toUser(@NotNull UserRepository userRepository) {
+        if (userRepository.findByEmail(this.email).isPresent()) {
+            throw new BadRequestException("Email already in use");
+        }
+        return User.builder()
+                .name(this.name)
+                .email(this.email)
+                .password(this.password)
+                .avatar(this.avatar)
+                .isProvider(this.isProvider)
+                .build();
+    }
 }

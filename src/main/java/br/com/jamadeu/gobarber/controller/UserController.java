@@ -1,6 +1,7 @@
 package br.com.jamadeu.gobarber.controller;
 
 import br.com.jamadeu.gobarber.domain.User;
+import br.com.jamadeu.gobarber.requests.NewUserRequest;
 import br.com.jamadeu.gobarber.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 
 
 @RestController
@@ -55,8 +57,8 @@ public class UserController {
             @ApiResponse(responseCode = "204", description = "Successful operation"),
             @ApiResponse(responseCode = "400", description = "When there is an error with some mandatory field")
     })
-    public ResponseEntity<User> save() {
-
+    public ResponseEntity<User> save(@RequestBody @Valid NewUserRequest newUserRequest) {
+        return new ResponseEntity<>(userService.save(newUserRequest), HttpStatus.CREATED);
     }
 
 }
