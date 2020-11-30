@@ -1,6 +1,7 @@
 package br.com.jamadeu.gobarber.service;
 
 import br.com.jamadeu.gobarber.domain.User;
+import br.com.jamadeu.gobarber.exception.BadRequestException;
 import br.com.jamadeu.gobarber.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -14,5 +15,11 @@ public class UserService {
 
     public Page<User> listAll(Pageable pageable) {
         return userRepository.findAll(pageable);
+    }
+
+    public User findByIdOrThrowBadRequestException(long id) {
+        return userRepository.findById(id).orElseThrow(
+                () -> new BadRequestException("User not found")
+        );
     }
 }
