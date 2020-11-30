@@ -28,17 +28,15 @@ public class ReplaceUserRequest {
 
     @NotEmpty(message = "The user email can not be empty")
     @Email(message = "The user email must be in a valid email format")
-    @Schema(description = "This is the user's email", example = "email@example.com", required = true)
+    @Schema(description = "This is the user's email",
+            example = "email@example.com",
+            format = "local-part@domain",
+            required = true)
     private String email;
 
     @NotEmpty(message = "The user password can not be empty")
     @Size(min = 6, message = "The user password must be at least 6 characters")
-    @Schema(
-            description = "This is the user's password",
-            required = true,
-            format = "local-part@domain",
-            example = "email@example.com"
-    )
+    @Schema(description = "This is the user's password", required = true)
     private String password;
 
     @Schema(description = "This records if the user is a provider",
