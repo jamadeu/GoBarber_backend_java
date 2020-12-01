@@ -20,7 +20,7 @@ class UserRepositoryTest {
     private UserRepository userRepository;
 
     @Test
-    @DisplayName("Save persists user when successful")
+    @DisplayName("save persists user when successful")
     void save_PersistUser_WhenSuccessful() {
         User userToBeSaved = UserCreator.createUserToBeSaved();
         User userSaved = this.userRepository.save(userToBeSaved);
@@ -33,7 +33,7 @@ class UserRepositoryTest {
     }
 
     @Test
-    @DisplayName("Save updates user when successful")
+    @DisplayName("save updates user when successful")
     void save_UpdateUser_WhenSuccessful() {
         User userToBeSaved = UserCreator.createUserToBeSaved();
         User userSaved = this.userRepository.save(userToBeSaved);
@@ -50,7 +50,7 @@ class UserRepositoryTest {
     }
 
     @Test
-    @DisplayName("Delete deletes user when successful")
+    @DisplayName("delete deletes user when successful")
     void delete_DeleteUser_WhenSuccessful() {
         User userToBeSaved = UserCreator.createUserToBeSaved();
         User userSaved = this.userRepository.save(userToBeSaved);
@@ -61,7 +61,7 @@ class UserRepositoryTest {
     }
 
     @Test
-    @DisplayName("Find by isProvider true returns list of user who isProvider is true inside page object when successful")
+    @DisplayName("findByIsProviderTrue returns list of user who isProvider is true inside page object when successful")
     void findByIsProviderTrue_ReturnsListOfUserWhoIsProviderIsTrueInsidePageObject_WhenSuccessful() {
         User providerToBeSaved = UserCreator.createProviderToBeSaved();
         User userToBeSaved = UserCreator.createUserToBeSaved();
@@ -77,7 +77,7 @@ class UserRepositoryTest {
     }
 
     @Test
-    @DisplayName("Find by email returns optional of user when successful")
+    @DisplayName("findByEmail returns optional of user when successful")
     void findByEmail_ReturnsOptionalOfUser_WhenSuccessful() {
         User userToBeSaved = UserCreator.createUserToBeSaved();
         User userSaved = this.userRepository.save(userToBeSaved);
@@ -90,7 +90,7 @@ class UserRepositoryTest {
     }
 
     @Test
-    @DisplayName("Find by email returns optional empty when user is not found")
+    @DisplayName("findByEmail returns optional empty when user is not found")
     void findByEmail_ReturnsOptionalOfUser_WhenUserIsNotFound() {
         Optional<User> userOptional = this.userRepository.findByEmail("notfound@gobarber.com");
 
@@ -100,7 +100,7 @@ class UserRepositoryTest {
     }
 
     @Test
-    @DisplayName("Save throw ConstraintViolationException when name is empty")
+    @DisplayName("save throw ConstraintViolationException when name is empty")
     void save_ThrowsConstraintViolationException_WhenNameIsEmpty() {
         User user = User.builder()
                 .email("email@gobarber.com")
@@ -113,7 +113,7 @@ class UserRepositoryTest {
     }
 
     @Test
-    @DisplayName("Save throw ConstraintViolationException when email is empty")
+    @DisplayName("save throw ConstraintViolationException when email is empty")
     void save_ThrowsConstraintViolationException_WhenEmailIsEmpty() {
         User user = User.builder()
                 .name("User")
@@ -126,7 +126,7 @@ class UserRepositoryTest {
     }
 
     @Test
-    @DisplayName("Save throw ConstraintViolationException when email is not in the correct format")
+    @DisplayName("save throw ConstraintViolationException when email is not in the correct format")
     void save_ThrowsConstraintViolationException_WhenEmailIsNotFormatted() {
         User user = User.builder()
                 .name("User")
@@ -140,7 +140,7 @@ class UserRepositoryTest {
     }
 
     @Test
-    @DisplayName("Save throw ConstraintViolationException when password is empty")
+    @DisplayName("save throw ConstraintViolationException when password is empty")
     void save_ThrowsConstraintViolationException_WhenPasswordIsEmpty() {
         User user = User.builder()
                 .name("User")
@@ -153,7 +153,7 @@ class UserRepositoryTest {
     }
 
     @Test
-    @DisplayName("Save throw ConstraintViolationException when password is less than 6 characters")
+    @DisplayName("save throw ConstraintViolationException when password is less than 6 characters")
     void save_ThrowsConstraintViolationException_WhenPasswordIsLessThan6Characters() {
         User user = User.builder()
                 .name("User")
@@ -167,7 +167,7 @@ class UserRepositoryTest {
     }
 
     @Test
-    @DisplayName("Save persists user isProvider is false by default when successful")
+    @DisplayName("save persists user isProvider is false by default when successful")
     void save_PersistUserIsProviderFalseByDefault_WhenSuccessful() {
         User userToBeSaved = UserCreator.createUserToBeSaved();
         User userSaved = this.userRepository.save(userToBeSaved);

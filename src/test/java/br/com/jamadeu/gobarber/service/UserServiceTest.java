@@ -50,13 +50,13 @@ class UserServiceTest {
     @DisplayName("listAll returns list of users inside page object when successful")
     void listAll_ReturnsListOfUsersInsidePageObject_WhenSuccessful() {
         String expectedName = UserCreator.createValidUser().getName();
-        Page<User> animePage = userService.listAll(PageRequest.of(1, 1));
+        Page<User> userPage = userService.listAll(PageRequest.of(1, 1));
 
-        Assertions.assertThat(animePage).isNotNull();
-        Assertions.assertThat(animePage.toList())
+        Assertions.assertThat(userPage).isNotNull();
+        Assertions.assertThat(userPage.toList())
                 .isNotEmpty()
                 .hasSize(1);
-        Assertions.assertThat(animePage.toList().get(0).getName()).isEqualTo(expectedName);
+        Assertions.assertThat(userPage.toList().get(0).getName()).isEqualTo(expectedName);
     }
 
     @Test
@@ -82,7 +82,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("listAllProviders returns list of users who isProvider is true inside page object when successful")
-    void listAll_ReturnsListOfUsersWhoIsProviderIsTrueInsidePageObject_WhenSuccessful() {
+    void listAllProviders_ReturnsListOfUsersWhoIsProviderIsTrueInsidePageObject_WhenSuccessful() {
         String expectedName = UserCreator.createValidProvider().getName();
         Page<User> providerPage = userService.listAllProviders(PageRequest.of(1, 1));
 
@@ -95,7 +95,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("save returns user when successful")
-    void save_ReturnsAnime_WhenSuccessful() {
+    void save_ReturnsAnimUser_WhenSuccessful() {
         User user = userService.save(NewUserRequestCreator.createNewUserRequest());
 
         Assertions.assertThat(user)
