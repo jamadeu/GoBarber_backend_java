@@ -1,13 +1,11 @@
 package br.com.jamadeu.gobarber.integration;
 
 import br.com.jamadeu.gobarber.domain.User;
-import br.com.jamadeu.gobarber.exception.BadRequestExceptionDetails;
 import br.com.jamadeu.gobarber.repository.UserRepository;
 import br.com.jamadeu.gobarber.requests.NewUserRequest;
 import br.com.jamadeu.gobarber.util.NewUserRequestCreator;
 import br.com.jamadeu.gobarber.util.UserCreator;
 import br.com.jamadeu.gobarber.wrapper.PageableResponse;
-import lombok.extern.log4j.Log4j2;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,7 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 
-@Log4j2
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -76,7 +74,6 @@ class UserControllerIT {
                 User.class,
                 1L
         );
-        log.info(responseEntity);
 
         Assertions.assertThat(responseEntity).isNotNull();
         Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
