@@ -13,7 +13,6 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.stream.Stream;
 
 
 @Service
@@ -36,7 +35,7 @@ public class AvatarService {
         } catch (FileAlreadyExistsException e) {
             throw new BadRequestException("File already exists - " + filename);
         } catch (IOException e) {
-            throw new BadRequestException("Error to save the file");
+            throw new BadRequestException("Error to save file");
         }
         return this.load(filename);
     }
@@ -59,14 +58,5 @@ public class AvatarService {
     public void deleteAll() {
         FileSystemUtils.deleteRecursively(root.toFile());
     }
-
-    public Stream<Path> loadAll() {
-        try {
-            return Files.walk(this.root, 1).filter(path -> !path.equals(this.root)).map(this.root::relativize);
-        } catch (IOException e) {
-            throw new BadRequestException("Could not load the files!");
-        }
-    }
-
 
 }
