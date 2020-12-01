@@ -19,14 +19,6 @@ import java.nio.file.Paths;
 public class AvatarService {
     private final Path root = Paths.get("uploads");
 
-    public void init() {
-        try {
-            Files.createDirectory(root);
-        } catch (IOException e) {
-            throw new BadRequestException("Could not initialize folder for upload!");
-        }
-    }
-
     public Resource save(MultipartFile file) {
         String filename = file.getOriginalFilename();
         assert filename != null;
@@ -53,10 +45,6 @@ public class AvatarService {
         } catch (MalformedURLException e) {
             throw new BadRequestException("Error: " + e.getMessage());
         }
-    }
-
-    public void deleteAll() {
-        FileSystemUtils.deleteRecursively(root.toFile());
     }
 
 }

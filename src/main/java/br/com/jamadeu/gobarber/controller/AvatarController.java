@@ -4,19 +4,19 @@ import br.com.jamadeu.gobarber.domain.User;
 import br.com.jamadeu.gobarber.requests.ReplaceUserRequest;
 import br.com.jamadeu.gobarber.service.AvatarService;
 import br.com.jamadeu.gobarber.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
-import java.io.IOException;
-
-@Log4j2
 @RestController
 @RequestMapping("/avatar")
 @RequiredArgsConstructor
@@ -26,6 +26,9 @@ public class AvatarController {
     private final UserService userService;
 
     @GetMapping("/files/{filename:.+}")
+    @Operation(summary = "Find file by name",
+            tags = {"avatar"}
+    )
     public ResponseEntity<Resource> getFile(@PathVariable String filename) {
         Resource file = avatarService.load(filename);
         return ResponseEntity.ok()
@@ -33,10 +36,16 @@ public class AvatarController {
     }
 
     @PostMapping("/upload/{id}")
+    @Transactional
+    @Operation(summary = "Upload the avatar file and save url",
+            tags = {"avatar"}
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Successful operation"),
+            @ApiResponse(responseCode = "400", description = "When user not found")
+    })
     public ResponseEntity<User> uploadAvatar(@PathVariable Long id, @RequestParam MultipartFile avatar) {
         User user = userService.findByIdOrThrowBadRequestException(id);
-        log.info(user);
-        log.info(user.isProvider());
         Resource avatarSaved = avatarService.save(avatar);
         String url = MvcUriComponentsBuilder
                 .fromMethodName(AvatarController.class, "getFile", avatarSaved.getFilename()).build().toString();
@@ -50,7 +59,6 @@ public class AvatarController {
                 .build();
         userService.replace(userUpdated);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
     }
 
 
