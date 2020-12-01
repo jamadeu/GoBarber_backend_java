@@ -7,7 +7,6 @@ import br.com.jamadeu.gobarber.service.UserService;
 import br.com.jamadeu.gobarber.util.NewUserRequestCreator;
 import br.com.jamadeu.gobarber.util.ReplaceUserRequestCreator;
 import br.com.jamadeu.gobarber.util.UserCreator;
-import lombok.extern.log4j.Log4j2;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,29 +25,28 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 
-@Log4j2
 @ExtendWith(SpringExtension.class)
 class UserControllerTest {
     @InjectMocks
     private UserController userController;
 
     @Mock
-    private UserService userService;
+    private UserService userServiceMock;
 
     @BeforeEach
     void setup() {
         PageImpl<User> userPage = new PageImpl<>(List.of(UserCreator.createValidUser()));
         PageImpl<User> providerPage = new PageImpl<>(List.of(UserCreator.createValidProvider()));
-        BDDMockito.when(userService.listAll(ArgumentMatchers.any(PageRequest.class)))
+        BDDMockito.when(userServiceMock.listAll(ArgumentMatchers.any(PageRequest.class)))
                 .thenReturn(userPage);
-        BDDMockito.when(userService.findByIdOrThrowBadRequestException(ArgumentMatchers.anyLong()))
+        BDDMockito.when(userServiceMock.findByIdOrThrowBadRequestException(ArgumentMatchers.anyLong()))
                 .thenReturn(UserCreator.createValidUser());
-        BDDMockito.when(userService.listAllProviders(ArgumentMatchers.any(PageRequest.class)))
+        BDDMockito.when(userServiceMock.listAllProviders(ArgumentMatchers.any(PageRequest.class)))
                 .thenReturn(providerPage);
-        BDDMockito.when(userService.save(ArgumentMatchers.any(NewUserRequest.class)))
+        BDDMockito.when(userServiceMock.save(ArgumentMatchers.any(NewUserRequest.class)))
                 .thenReturn(UserCreator.createValidUser());
-        BDDMockito.doNothing().when(userService).replace(ArgumentMatchers.any(ReplaceUserRequest.class));
-        BDDMockito.doNothing().when(userService).delete(ArgumentMatchers.anyLong());
+        BDDMockito.doNothing().when(userServiceMock).replace(ArgumentMatchers.any(ReplaceUserRequest.class));
+        BDDMockito.doNothing().when(userServiceMock).delete(ArgumentMatchers.anyLong());
     }
 
     @Test
