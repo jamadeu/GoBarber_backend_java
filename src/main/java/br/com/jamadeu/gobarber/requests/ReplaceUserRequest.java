@@ -63,6 +63,7 @@ public class ReplaceUserRequest {
                 .name(this.name)
                 .email(this.email)
                 .password(this.password)
+                .isProvider(this.isProvider)
                 .avatar(this.avatar)
                 .build();
     }
