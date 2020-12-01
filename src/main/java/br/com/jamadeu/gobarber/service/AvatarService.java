@@ -1,5 +1,6 @@
 package br.com.jamadeu.gobarber.service;
 
+import br.com.jamadeu.gobarber.exception.BadRequestException;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -8,14 +9,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Objects;
 import java.util.stream.Stream;
 
+
 @Service
-@SuppressWarnings("java:S112")
 public class AvatarService {
     private final Path root = Paths.get("uploads");
 
@@ -23,19 +24,21 @@ public class AvatarService {
         try {
             Files.createDirectory(root);
         } catch (IOException e) {
-            throw new RuntimeException("Could not initialize folder for upload!");
+            throw new BadRequestException("Could not initialize folder for upload!");
         }
     }
 
     public Resource save(MultipartFile file) {
+        String filename = file.getOriginalFilename();
+        assert filename != null;
         try {
-            String filename = file.getOriginalFilename();
-            assert filename != null;
             Files.copy(file.getInputStream(), this.root.resolve(filename));
-            return this.load(filename);
-        } catch (Exception e) {
-            throw new RuntimeException("Could not store the file. Error: " + e.getMessage());
+        } catch (FileAlreadyExistsException e) {
+            throw new BadRequestException("File already exists - " + filename);
+        } catch (IOException e) {
+            throw new BadRequestException("Error to save the file");
         }
+        return this.load(filename);
     }
 
     public Resource load(String filename) {
@@ -46,10 +49,10 @@ public class AvatarService {
             if (resource.exists() || resource.isReadable()) {
                 return resource;
             } else {
-                throw new RuntimeException("Could not read the file!");
+                throw new BadRequestException("Could not read the file!");
             }
         } catch (MalformedURLException e) {
-            throw new RuntimeException("Error: " + e.getMessage());
+            throw new BadRequestException("Error: " + e.getMessage());
         }
     }
 
@@ -61,7 +64,7 @@ public class AvatarService {
         try {
             return Files.walk(this.root, 1).filter(path -> !path.equals(this.root)).map(this.root::relativize);
         } catch (IOException e) {
-            throw new RuntimeException("Could not load the files!");
+            throw new BadRequestException("Could not load the files!");
         }
     }
 

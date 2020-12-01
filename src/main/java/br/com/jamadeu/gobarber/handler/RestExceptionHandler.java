@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.FileAlreadyExistsException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,6 +26,39 @@ import java.util.stream.Collectors;
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<BadRequestExceptionDetails> handleBadRequestException(BadRequestException exception) {
+        return new ResponseEntity<>(BadRequestExceptionDetails.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .title("Bad Request Exception")
+                .details(exception.getMessage())
+                .developerMessage(exception.getClass().getName())
+                .build(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(FileAlreadyExistsException.class)
+    public ResponseEntity<ExceptionDetails> handleFileAlreadyExistsException(FileAlreadyExistsException exception) {
+        return new ResponseEntity<>(BadRequestExceptionDetails.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .title("Bad Request Exception")
+                .details("File already exists - " + exception.getMessage())
+                .developerMessage(exception.getClass().getName())
+                .build(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MalformedURLException.class)
+    public ResponseEntity<ExceptionDetails> handleMalformedURLException(MalformedURLException exception) {
+        return new ResponseEntity<>(BadRequestExceptionDetails.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .title("Bad Request Exception")
+                .details(exception.getMessage())
+                .developerMessage(exception.getClass().getName())
+                .build(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity<ExceptionDetails> handleIOException(IOException exception) {
         return new ResponseEntity<>(BadRequestExceptionDetails.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.BAD_REQUEST.value())
