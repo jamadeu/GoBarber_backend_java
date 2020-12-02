@@ -8,12 +8,17 @@ import br.com.jamadeu.gobarber.requests.ReplaceUserRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
 
     public Page<User> listAll(Pageable pageable) {
@@ -45,4 +50,9 @@ public class UserService {
         userRepository.delete(this.findByIdOrThrowBadRequestException(id));
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String username) {
+        return Optional.ofNullable(userRepository.findByUsername(username))
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
 }
