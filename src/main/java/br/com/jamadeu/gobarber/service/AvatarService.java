@@ -12,15 +12,20 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
+import java.util.UUID;
 
 @Service
 public class AvatarService {
     private final Path root = Paths.get("uploads");
 
     public Resource save(MultipartFile file) {
-        String filename = file.getOriginalFilename();
-        assert filename != null;
+
+        String originalFilename = file.getOriginalFilename();
+        assert originalFilename != null;
+        int i = originalFilename.indexOf(".");
+        String extension = originalFilename.substring(i);
+        String filename = UUID.randomUUID().toString() + extension ;
+
         try {
             Files.copy(file.getInputStream(), this.root.resolve(filename));
         } catch (FileAlreadyExistsException e) {
