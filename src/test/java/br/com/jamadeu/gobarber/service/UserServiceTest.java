@@ -5,6 +5,7 @@ import br.com.jamadeu.gobarber.exception.BadRequestException;
 import br.com.jamadeu.gobarber.repository.UserRepository;
 import br.com.jamadeu.gobarber.util.NewUserRequestCreator;
 import br.com.jamadeu.gobarber.util.ReplaceUserRequestCreator;
+import br.com.jamadeu.gobarber.util.ResetPasswordRequestCreator;
 import br.com.jamadeu.gobarber.util.UserCreator;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
@@ -32,6 +34,9 @@ class UserServiceTest {
 
     @Mock
     private UserRepository userRepositoryMock;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @BeforeEach
     void setup() {
@@ -144,5 +149,10 @@ class UserServiceTest {
                 .isThrownBy(() -> userService.loadUserByUsername("userNameNotExists"));
     }
 
-
+    @Test
+    @DisplayName("resetPassword updates user's password when successful")
+    void resetPassword_UpdatesUserPassword_WhenSuccessful() {
+        Assertions.assertThatCode(() -> userService.resetPassword(ResetPasswordRequestCreator.createResetPasswordRequest()))
+                .doesNotThrowAnyException();
+    }
 }

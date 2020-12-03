@@ -33,7 +33,7 @@ public class UserCreator {
                 .name("User")
                 .username("username")
                 .email("provider@gobarber.com")
-                .password("123123")
+                .password("{bcrypt}$2a$10$pncFwVKOhZk60qmP8Y.Sjuuj7pBzsVT5OxZdC.OKVHjja6jC/murG")
                 .authorities("ROLE_USER")
                 .build();
     }
@@ -44,7 +44,7 @@ public class UserCreator {
                 .name("Provider")
                 .username("providerUsername")
                 .email("provider@gobarber.com")
-                .password("123123")
+                .password("{bcrypt}$2a$10$pncFwVKOhZk60qmP8Y.Sjuuj7pBzsVT5OxZdC.OKVHjja6jC/murG")
                 .isProvider(true)
                 .authorities("ROLE_PROVIDER")
                 .build();
