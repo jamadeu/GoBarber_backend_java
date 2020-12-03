@@ -1,6 +1,6 @@
 server:
   error:
-    include-stacktrace: on-param
+    include-stacktrace: ON_PARAM
 
 spring:
   datasource:

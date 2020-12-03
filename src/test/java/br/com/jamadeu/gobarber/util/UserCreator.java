@@ -10,6 +10,7 @@ public class UserCreator {
                 .username("username")
                 .email("user@gobarber.com")
                 .password("123123")
+                .isProvider(false)
                 .authorities("ROLE_USER")
                 .build();
     }
@@ -20,6 +21,7 @@ public class UserCreator {
                 .username("username")
                 .email("user@gobarber.com")
                 .password("{bcrypt}$2a$10$pncFwVKOhZk60qmP8Y.Sjuuj7pBzsVT5OxZdC.OKVHjja6jC/murG")
+                .isProvider(false)
                 .authorities("ROLE_USER")
                 .build();
     }

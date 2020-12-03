@@ -3,11 +3,14 @@ package br.com.jamadeu.gobarber.integration;
 import br.com.jamadeu.gobarber.domain.User;
 import br.com.jamadeu.gobarber.repository.UserRepository;
 import br.com.jamadeu.gobarber.requests.NewUserRequest;
+import br.com.jamadeu.gobarber.requests.ReplaceUserRequest;
 import br.com.jamadeu.gobarber.requests.ResetPasswordRequest;
 import br.com.jamadeu.gobarber.util.NewUserRequestCreator;
+import br.com.jamadeu.gobarber.util.ReplaceUserRequestCreator;
 import br.com.jamadeu.gobarber.util.ResetPasswordRequestCreator;
 import br.com.jamadeu.gobarber.util.UserCreator;
 import br.com.jamadeu.gobarber.wrapper.PageableResponse;
+import lombok.extern.log4j.Log4j2;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,6 +34,7 @@ import org.springframework.test.annotation.DirtiesContext;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@Log4j2
 class UserControllerIT {
     @Autowired
     private TestRestTemplate testRestTemplate;
@@ -200,16 +204,17 @@ class UserControllerIT {
     @Test
     @DisplayName("replace updates user when successful")
     void replace_UpdatesUser_WhenSuccessful() {
-        User savedUser = userRepository.save(UserCreator.createUserToBeSaved());
+        userRepository.save(UserCreator.createUserToBeSavedWithPasswordEncoded());
         userRepository.save(USER);
-        savedUser.setName("Updated User");
+        ReplaceUserRequest replaceUserRequest = ReplaceUserRequestCreator.createReplaceUserRequest();
+        replaceUserRequest.setName("Updated user");
         ResponseEntity<Void> responseEntity = testRestTemplate.exchange(
                 "/users",
                 HttpMethod.PUT,
-                new HttpEntity<>(savedUser),
+                new HttpEntity<>(replaceUserRequest),
                 Void.class
         );
-
+        log.info(responseEntity.getBody());
         Assertions.assertThat(responseEntity).isNotNull();
         Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
@@ -226,7 +231,6 @@ class UserControllerIT {
                 new HttpEntity<>(userNotExists),
                 Void.class
         );
-
         Assertions.assertThat(responseEntity).isNotNull();
         Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
