@@ -180,5 +180,28 @@ class UserRepositoryTest {
         Assertions.assertThat(userSaved.isProvider()).isFalse();
     }
 
+    @Test
+    @DisplayName("findByUsername returns optional of user when successful")
+    void findByUsername_ReturnsOptionalOfUser_WhenSuccessful() {
+        User userToBeSaved = UserCreator.createUserToBeSaved();
+        User userSaved = this.userRepository.save(userToBeSaved);
+        Optional<User> userOptional = this.userRepository.findByUsername(userSaved.getUsername());
+
+        Assertions.assertThat(userOptional)
+                .isNotNull()
+                .isPresent();
+        Assertions.assertThat(userOptional.get().getId()).isEqualTo(userSaved.getId());
+    }
+
+    @Test
+    @DisplayName("findByUsername returns optional empty when user is not found")
+    void findByUsername_ReturnsOptionalOfUser_WhenUserIsNotFound() {
+        Optional<User> userOptional = this.userRepository.findByUsername("usernameNotExists");
+
+        Assertions.assertThat(userOptional)
+                .isNotNull()
+                .isEmpty();
+    }
+
 
 }

@@ -7,6 +7,7 @@ public class UserCreator {
     public static User createUserToBeSaved() {
         return User.builder()
                 .name("User")
+                .username("username")
                 .email("user@gobarber.com")
                 .password("123123")
                 .build();
@@ -15,6 +16,7 @@ public class UserCreator {
     public static User createProviderToBeSaved() {
         return User.builder()
                 .name("Provider")
+                .username("providerUsername")
                 .email("provider@gobarber.com")
                 .password("123123")
                 .isProvider(true)
@@ -25,6 +27,7 @@ public class UserCreator {
         return User.builder()
                 .id(1L)
                 .name("User")
+                .username("username")
                 .email("provider@gobarber.com")
                 .password("123123")
                 .build();
@@ -34,31 +37,33 @@ public class UserCreator {
         return User.builder()
                 .id(2L)
                 .name("Provider")
+                .username("providerUsername")
                 .email("provider@gobarber.com")
                 .password("123123")
                 .isProvider(true)
                 .build();
     }
 
-    public static User createValidUpdatedUser() {
-        return User.builder()
-                .id(1L)
-                .name("Updated User")
-                .email("provider@gobarber.com")
-                .password("123123")
-                .isProvider(true)
-                .build();
-    }
-
-    public static User createValidUpdatedProvider() {
-        return User.builder()
-                .id(2L)
-                .name("Updated Provider")
-                .email("provider@gobarber.com")
-                .password("123123")
-                .isProvider(true)
-                .build();
-    }
+//    public static User createValidUpdatedUser() {
+//        return User.builder()
+//                .id(1L)
+//                .name("Updated User")
+//                .username("username")
+//                .email("provider@gobarber.com")
+//                .password("123123")
+//                .isProvider(true)
+//                .build();
+//    }
+//
+//    public static User createValidUpdatedProvider() {
+//        return User.builder()
+//                .id(2L)
+//                .name("Updated Provider")
+//                .email("provider@gobarber.com")
+//                .password("123123")
+//                .isProvider(true)
+//                .build();
+//    }
 
 
 }
