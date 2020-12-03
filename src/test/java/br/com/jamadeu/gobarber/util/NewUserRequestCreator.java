@@ -8,6 +8,7 @@ public class NewUserRequestCreator {
         User user = UserCreator.createUserToBeSaved();
         return NewUserRequest.builder()
                 .name(user.getName())
+                .username(user.getUsername())
                 .email(user.getEmail())
                 .password(user.getPassword())
                 .build();

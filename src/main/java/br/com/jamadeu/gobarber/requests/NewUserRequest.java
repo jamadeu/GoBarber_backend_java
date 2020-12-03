@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -23,9 +25,15 @@ public class NewUserRequest {
     @Schema(description = "This is the user's name", example = "Name", required = true)
     private String name;
 
+    @NotEmpty(message = "The user name can not be empty")
+    @Schema(description = "This is the user's username, this must be unique.",
+            example = "name",
+            required = true)
+    private String username;
+
     @NotEmpty(message = "The user email can not be empty")
     @Email(message = "The user email must be in a valid email format")
-    @Schema(description = "This is the user's email",
+    @Schema(description = "This is the user's email address, this must be unique.",
             example = "email@example.com",
             format = "local-part@domain",
             required = true)
@@ -33,32 +41,42 @@ public class NewUserRequest {
 
     @NotEmpty(message = "The user password can not be empty")
     @Size(min = 6, message = "The user password must be at least 6 characters")
-    @Schema(description = "This is the user's password", required = true)
+    @Schema(description = "This is a user password unencrypted", required = true)
     private String password;
 
     @Schema(description = "This records if the user is a provider",
-            required = false,
             defaultValue = "false"
     )
     private boolean isProvider;
 
     @Schema(description = "This is the user's avatar",
-            required = false,
             defaultValue = "null",
             nullable = true
     )
     private String avatar;
 
+    private String authorities = "ROLE_USER";
+
     public User toUser(@NotNull UserRepository userRepository) {
         if (userRepository.findByEmail(this.email).isPresent()) {
-            throw new BadRequestException("Email already in use");
+            throw new BadRequestException("This email is already in use: " + this.email);
         }
+        if (userRepository.findByUsername(this.username).isPresent()) {
+            throw new BadRequestException("This username is already in use: " + this.username);
+        }
+        if (this.isProvider()) {
+            this.setAuthorities("ROLE_PROVIDER");
+        }
+        PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        String passwordEncoded = passwordEncoder.encode(this.password);
         return User.builder()
                 .name(this.name)
+                .username(this.username)
                 .email(this.email)
-                .password(this.password)
+                .password(passwordEncoded)
                 .avatar(this.avatar)
                 .isProvider(this.isProvider)
+                .authorities(this.authorities)
                 .build();
     }
 }
