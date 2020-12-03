@@ -30,6 +30,7 @@ public class UserCreator {
                 .username("username")
                 .email("provider@gobarber.com")
                 .password("123123")
+                .authorities("ROLE_USER")
                 .build();
     }
 
@@ -41,6 +42,7 @@ public class UserCreator {
                 .email("provider@gobarber.com")
                 .password("123123")
                 .isProvider(true)
+                .authorities("ROLE_PROVIDER")
                 .build();
     }
 

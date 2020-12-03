@@ -18,6 +18,8 @@ import org.mockito.Mock;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
@@ -44,6 +46,8 @@ class UserServiceTest {
         BDDMockito.when(userRepositoryMock.save(ArgumentMatchers.any(User.class)))
                 .thenReturn(UserCreator.createValidUser());
         BDDMockito.doNothing().when(userRepositoryMock).delete(ArgumentMatchers.any(User.class));
+        BDDMockito.when(userRepositoryMock.findByUsername(ArgumentMatchers.anyString()))
+                .thenReturn(Optional.of(UserCreator.createValidUser()));
     }
 
     @Test
@@ -96,6 +100,8 @@ class UserServiceTest {
     @Test
     @DisplayName("save returns user when successful")
     void save_ReturnsAnimUser_WhenSuccessful() {
+        BDDMockito.when(userRepositoryMock.findByUsername(ArgumentMatchers.anyString())).
+                thenReturn(Optional.empty());
         User user = userService.save(NewUserRequestCreator.createNewUserRequest());
 
         Assertions.assertThat(user)
@@ -115,6 +121,27 @@ class UserServiceTest {
     void delete_DeletesUser_WhenSuccessful() {
         Assertions.assertThatCode(() -> userService.delete(1L))
                 .doesNotThrowAnyException();
+    }
+
+    @Test
+    @DisplayName("loadUserByUsername returns user when successful")
+    void loadUserByUsername_ReturnsUser_WhenSuccessful() {
+        String username = UserCreator.createValidUser().getUsername();
+        UserDetails userDetails = userService.loadUserByUsername(username);
+
+        Assertions.assertThat(userDetails).isNotNull();
+        Assertions.assertThat(userDetails.getUsername())
+                .isNotNull()
+                .isEqualTo(username);
+    }
+
+    @Test
+    @DisplayName("loadUserByUsername throws BadRequestException when user is not found")
+    void loadUserByUsername_ThrowsBadRequestException_WhenUserIsNotFound() {
+        BDDMockito.when(userRepositoryMock.findByUsername(ArgumentMatchers.anyString()))
+                .thenReturn(Optional.empty());
+        Assertions.assertThatExceptionOfType(UsernameNotFoundException.class)
+                .isThrownBy(() -> userService.loadUserByUsername("userNameNotExists"));
     }
 
 
