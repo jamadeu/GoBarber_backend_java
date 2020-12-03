@@ -3,6 +3,7 @@ package br.com.jamadeu.gobarber.controller;
 import br.com.jamadeu.gobarber.domain.User;
 import br.com.jamadeu.gobarber.requests.NewUserRequest;
 import br.com.jamadeu.gobarber.requests.ReplaceUserRequest;
+import br.com.jamadeu.gobarber.requests.ResetPasswordRequest;
 import br.com.jamadeu.gobarber.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -92,6 +93,12 @@ public class UserController {
     })
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         userService.delete(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PatchMapping
+    public ResponseEntity<Void> resetPassword(@RequestBody @Valid ResetPasswordRequest resetPasswordRequest) {
+        userService.resetPassword(resetPasswordRequest);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

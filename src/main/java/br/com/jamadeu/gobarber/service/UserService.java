@@ -5,6 +5,7 @@ import br.com.jamadeu.gobarber.exception.BadRequestException;
 import br.com.jamadeu.gobarber.repository.UserRepository;
 import br.com.jamadeu.gobarber.requests.NewUserRequest;
 import br.com.jamadeu.gobarber.requests.ReplaceUserRequest;
+import br.com.jamadeu.gobarber.requests.ResetPasswordRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -52,5 +53,9 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
+
+    public void resetPassword(ResetPasswordRequest resetPasswordRequest) {
+        userRepository.save(resetPasswordRequest.toUser(userRepository));
     }
 }
