@@ -1,5 +1,6 @@
 package br.com.jamadeu.gobarber.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -43,6 +44,7 @@ public class User implements UserDetails {
     @NotEmpty(message = "The user password can not be empty")
     @Size(min = 6, message = "The user password must be at least 6 characters")
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
 
     @Column(columnDefinition = "boolean default false")
