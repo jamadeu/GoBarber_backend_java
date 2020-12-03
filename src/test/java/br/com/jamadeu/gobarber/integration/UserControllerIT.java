@@ -10,9 +10,14 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -30,11 +35,32 @@ class UserControllerIT {
     @Autowired
     private UserRepository userRepository;
 
+    public static final User USER = User.builder()
+            .name("admin")
+            .password("{bcrypt}$2a$10$w80PLxkKSJMlJR2//Y7zcekwzFK1k2tIuo/hf.7toZ5y2rEu0302i")
+            .username("admin")
+            .email("admin@gobarber.com")
+            .isProvider(false)
+            .authorities("ROLE_USER")
+            .build();
+
+    @TestConfiguration
+    @Lazy
+    static class config {
+        @Bean
+        public TestRestTemplate testRestTemplate(@Value("${local.server.port}") int port) {
+            RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder()
+                    .rootUri("http://localhost:" + port)
+                    .basicAuthentication("admin", "admin");
+            return new TestRestTemplate(restTemplateBuilder);
+        }
+    }
+
     @Test
     @DisplayName("listAll returns list of users inside page object when successful")
     void listAll_ReturnsListOfUsersInsidePageObject_WhenSuccessful() {
-        User user = userRepository.save(UserCreator.createUserToBeSaved());
-        String expectedName = UserCreator.createValidUser().getName();
+        String expectedName = userRepository.save(UserCreator.createUserToBeSaved()).getName();
+        userRepository.save(USER);
         PageableResponse<User> userPage = testRestTemplate.exchange(
                 "/users",
                 HttpMethod.GET,
@@ -45,7 +71,7 @@ class UserControllerIT {
         Assertions.assertThat(userPage).isNotNull();
         Assertions.assertThat(userPage.toList())
                 .isNotEmpty()
-                .hasSize(1);
+                .hasSize(2);
         Assertions.assertThat(userPage.toList().get(0).getName()).isEqualTo(expectedName);
     }
 
@@ -53,6 +79,7 @@ class UserControllerIT {
     @DisplayName("findById returns user when successful")
     void findById_ReturnsUser_WhenSuccessful() {
         User savedUser = userRepository.save(UserCreator.createUserToBeSaved());
+        userRepository.save(USER);
         Long expectedId = savedUser.getId();
         User user = testRestTemplate.getForObject(
                 "/users/{id}",
@@ -67,12 +94,14 @@ class UserControllerIT {
     @Test
     @DisplayName("findById returns status code 400 BadRequest when user is not found")
     void findById_ReturnsStatusCode400BadRequest_WhenUserIsNotFound() {
+        Long id = userRepository.save(USER).getId();
+        id += 1L;
         ResponseEntity<User> responseEntity = testRestTemplate.exchange(
                 "/users/{id}",
                 HttpMethod.GET,
                 null,
                 User.class,
-                1L
+                id
         );
 
         Assertions.assertThat(responseEntity).isNotNull();
@@ -83,6 +112,7 @@ class UserControllerIT {
     @DisplayName("listAllProvider returns list of users who isProvider is true inside page object when successful")
     void listAllProviders_ReturnsListOfUsersWhoIsProviderIsTrueInsidePageObject_WhenSuccessful() {
         userRepository.save(UserCreator.createUserToBeSaved());
+        userRepository.save(USER);
         User savedProvider = userRepository.save(UserCreator.createProviderToBeSaved());
         String expectedName = savedProvider.getName();
         PageableResponse<User> providerPage = testRestTemplate.exchange(
@@ -103,6 +133,7 @@ class UserControllerIT {
     @Test
     @DisplayName("save returns user when successful")
     void save_ReturnsUser_WhenSuccessful() {
+        userRepository.save(USER);
         NewUserRequest newUserRequest = NewUserRequestCreator.createNewUserRequest();
         ResponseEntity<User> responseEntity = testRestTemplate.postForEntity(
                 "/users",
@@ -120,6 +151,7 @@ class UserControllerIT {
     @Test
     @DisplayName("save returns status code 400 bad request when any mandatory user argument is empty")
     void save_ReturnsStatusCode400_WhenAnyMandatoryUserArgumentIsEmpty() {
+        userRepository.save(USER);
         NewUserRequest newUserRequest = new NewUserRequest();
         ResponseEntity<User> responseEntity = testRestTemplate.postForEntity(
                 "/users",
@@ -134,6 +166,7 @@ class UserControllerIT {
     @Test
     @DisplayName("save returns status code 400 bad request when email is not in the correct format")
     void save_ReturnsStatusCode400_WhenEmailIsNotFormatted() {
+        userRepository.save(USER);
         NewUserRequest newUserRequest = NewUserRequestCreator.createNewUserRequest();
         newUserRequest.setEmail("emailNotFormatted");
         ResponseEntity<User> responseEntity = testRestTemplate.postForEntity(
@@ -149,6 +182,7 @@ class UserControllerIT {
     @Test
     @DisplayName("save returns status code 400 bad request when password is less than 6 characters")
     void save_ReturnsStatusCode400_WhenPasswordIsLessThan6Characters() {
+        userRepository.save(USER);
         NewUserRequest newUserRequest = NewUserRequestCreator.createNewUserRequest();
         newUserRequest.setPassword("123");
         ResponseEntity<User> responseEntity = testRestTemplate.postForEntity(
@@ -165,6 +199,7 @@ class UserControllerIT {
     @DisplayName("replace updates user when successful")
     void replace_UpdatesUser_WhenSuccessful() {
         User savedUser = userRepository.save(UserCreator.createUserToBeSaved());
+        userRepository.save(USER);
         savedUser.setName("Updated User");
         ResponseEntity<Void> responseEntity = testRestTemplate.exchange(
                 "/users",
@@ -181,6 +216,8 @@ class UserControllerIT {
     @DisplayName("replace returns status code 400 BadRequest when user is not found")
     void replace_ReturnsStatusCode400_WhenUserIsNotFound() {
         User userNotExists = UserCreator.createValidUser();
+        Long id = userRepository.save(USER).getId();
+        userNotExists.setId(id + 1L);
         ResponseEntity<Void> responseEntity = testRestTemplate.exchange(
                 "/users",
                 HttpMethod.PUT,
@@ -196,6 +233,7 @@ class UserControllerIT {
     @DisplayName("delete deletes user when successful")
     void delete_DeletesUser_WhenSuccessful() {
         User savedUser = userRepository.save(UserCreator.createUserToBeSaved());
+        userRepository.save(USER);
         ResponseEntity<Void> responseEntity = testRestTemplate.exchange(
                 "/users/{id}",
                 HttpMethod.DELETE,
@@ -211,12 +249,14 @@ class UserControllerIT {
     @Test
     @DisplayName("delete returns status code 400 BadRequest when user is not found")
     void delete_ReturnsStatusCode400_WhenUserIsNotFound() {
+        Long id = userRepository.save(USER).getId();
+        id += 1L;
         ResponseEntity<Void> responseEntity = testRestTemplate.exchange(
                 "/users/{id}",
                 HttpMethod.DELETE,
                 null,
                 Void.class,
-                1L
+                id
         );
 
         Assertions.assertThat(responseEntity).isNotNull();

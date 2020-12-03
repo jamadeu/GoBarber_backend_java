@@ -11,6 +11,7 @@ public class NewUserRequestCreator {
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .password(user.getPassword())
+                .authorities(user.getAuthorities().toString())
                 .build();
     }
 }

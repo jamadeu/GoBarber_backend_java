@@ -72,6 +72,7 @@ public class ReplaceUserRequest {
         return User.builder()
                 .id(savedUser.getId())
                 .name(this.name)
+                .username(this.username)
                 .email(this.email)
                 .password(passwordEncoded)
                 .isProvider(this.isProvider)

@@ -1,7 +1,9 @@
 package br.com.jamadeu.gobarber.util;
 
 import br.com.jamadeu.gobarber.domain.User;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 public class UserCreator {
 
     public static User createUserToBeSaved() {
@@ -10,6 +12,7 @@ public class UserCreator {
                 .username("username")
                 .email("user@gobarber.com")
                 .password("123123")
+                .authorities("ROLE_USER")
                 .build();
     }
 
@@ -19,6 +22,7 @@ public class UserCreator {
                 .username("providerUsername")
                 .email("provider@gobarber.com")
                 .password("123123")
+                .authorities("ROLE_PROVIDER")
                 .isProvider(true)
                 .build();
     }
