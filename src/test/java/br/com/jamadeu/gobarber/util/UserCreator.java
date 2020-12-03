@@ -1,9 +1,7 @@
 package br.com.jamadeu.gobarber.util;
 
 import br.com.jamadeu.gobarber.domain.User;
-import lombok.extern.log4j.Log4j2;
 
-@Log4j2
 public class UserCreator {
 
     public static User createUserToBeSaved() {
@@ -12,6 +10,16 @@ public class UserCreator {
                 .username("username")
                 .email("user@gobarber.com")
                 .password("123123")
+                .authorities("ROLE_USER")
+                .build();
+    }
+
+    public static User createUserToBeSavedWithPasswordEncoded() {
+        return User.builder()
+                .name("User")
+                .username("username")
+                .email("user@gobarber.com")
+                .password("{bcrypt}$2a$10$pncFwVKOhZk60qmP8Y.Sjuuj7pBzsVT5OxZdC.OKVHjja6jC/murG")
                 .authorities("ROLE_USER")
                 .build();
     }
@@ -49,27 +57,4 @@ public class UserCreator {
                 .authorities("ROLE_PROVIDER")
                 .build();
     }
-
-//    public static User createValidUpdatedUser() {
-//        return User.builder()
-//                .id(1L)
-//                .name("Updated User")
-//                .username("username")
-//                .email("provider@gobarber.com")
-//                .password("123123")
-//                .isProvider(true)
-//                .build();
-//    }
-//
-//    public static User createValidUpdatedProvider() {
-//        return User.builder()
-//                .id(2L)
-//                .name("Updated Provider")
-//                .email("provider@gobarber.com")
-//                .password("123123")
-//                .isProvider(true)
-//                .build();
-//    }
-
-
 }

@@ -96,7 +96,7 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PatchMapping
+    @PutMapping(path = "/reset-password")
     public ResponseEntity<Void> resetPassword(@RequestBody @Valid ResetPasswordRequest resetPasswordRequest) {
         userService.resetPassword(resetPasswordRequest);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

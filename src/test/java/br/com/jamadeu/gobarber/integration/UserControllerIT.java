@@ -3,7 +3,9 @@ package br.com.jamadeu.gobarber.integration;
 import br.com.jamadeu.gobarber.domain.User;
 import br.com.jamadeu.gobarber.repository.UserRepository;
 import br.com.jamadeu.gobarber.requests.NewUserRequest;
+import br.com.jamadeu.gobarber.requests.ResetPasswordRequest;
 import br.com.jamadeu.gobarber.util.NewUserRequestCreator;
+import br.com.jamadeu.gobarber.util.ResetPasswordRequestCreator;
 import br.com.jamadeu.gobarber.util.UserCreator;
 import br.com.jamadeu.gobarber.wrapper.PageableResponse;
 import org.assertj.core.api.Assertions;
@@ -257,6 +259,40 @@ class UserControllerIT {
                 null,
                 Void.class,
                 id
+        );
+
+        Assertions.assertThat(responseEntity).isNotNull();
+        Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    @DisplayName("resetPassword updates user password when successful")
+    void resetPassword_UpdatesUserPassword_WhenSuccessful() {
+        userRepository.save(UserCreator.createUserToBeSavedWithPasswordEncoded());
+        userRepository.save(USER);
+        ResetPasswordRequest resetPasswordRequest = ResetPasswordRequestCreator.createResetPasswordRequest();
+        ResponseEntity<Void> responseEntity = testRestTemplate.exchange(
+                "/users/reset-password?_method=patch",
+                HttpMethod.PUT,
+                new HttpEntity<>(resetPasswordRequest),
+                Void.class
+        );
+
+        Assertions.assertThat(responseEntity).isNotNull();
+        Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    }
+
+    @Test
+    @DisplayName("resetPassword returns status code 400 BadRequest when user is not found")
+    void resetPassword_ReturnsStatusCode400_WhenUserIsNotFound() {
+        ResetPasswordRequest userNotExists = ResetPasswordRequestCreator.createResetPasswordRequest();
+        Long id = userRepository.save(USER).getId();
+        userNotExists.setUsername("userNotExists");
+        ResponseEntity<Void> responseEntity = testRestTemplate.exchange(
+                "/users",
+                HttpMethod.PUT,
+                new HttpEntity<>(userNotExists),
+                Void.class
         );
 
         Assertions.assertThat(responseEntity).isNotNull();

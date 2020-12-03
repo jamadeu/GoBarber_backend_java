@@ -6,6 +6,7 @@ import br.com.jamadeu.gobarber.requests.ReplaceUserRequest;
 import br.com.jamadeu.gobarber.service.UserService;
 import br.com.jamadeu.gobarber.util.NewUserRequestCreator;
 import br.com.jamadeu.gobarber.util.ReplaceUserRequestCreator;
+import br.com.jamadeu.gobarber.util.ResetPasswordRequestCreator;
 import br.com.jamadeu.gobarber.util.UserCreator;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -113,6 +114,17 @@ class UserControllerTest {
         Assertions.assertThatCode(() -> userController.delete(1L))
                 .doesNotThrowAnyException();
         ResponseEntity<Void> responseEntity = userController.delete(1L);
+
+        Assertions.assertThat(responseEntity).isNotNull();
+        Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    }
+
+    @Test
+    @DisplayName("resetPassword updates user password when successful")
+    void resetPassword_UpdatesUserPassword_WhenSuccessful() {
+        Assertions.assertThatCode(() -> userController.resetPassword(ResetPasswordRequestCreator.createResetPasswordRequest()))
+                .doesNotThrowAnyException();
+        ResponseEntity<Void> responseEntity = userController.resetPassword(ResetPasswordRequestCreator.createResetPasswordRequest());
 
         Assertions.assertThat(responseEntity).isNotNull();
         Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
