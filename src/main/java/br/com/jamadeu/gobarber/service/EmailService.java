@@ -1,8 +1,8 @@
 package br.com.jamadeu.gobarber.service;
 
 import br.com.jamadeu.gobarber.domain.User;
-import br.com.jamadeu.gobarber.exception.BadRequestException;
 import br.com.jamadeu.gobarber.repository.UserRepository;
+import br.com.jamadeu.gobarber.requests.SendForgotPasswordEmailRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -17,14 +17,14 @@ public class EmailService {
     private final UserRepository userRepository;
     private final JavaMailSenderImpl emailSender;
 
-    public String sendForgotPasswordEmail(Long id){
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new BadRequestException("User not found"));
+    public String sendForgotPasswordEmail(SendForgotPasswordEmailRequest sendForgotPasswordEmailRequest) {
+        User user = sendForgotPasswordEmailRequest.toUser(userRepository);
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
         try {
             helper.setTo(user.getEmail());
-            helper.setText("Thank you for ordering!");
+            helper.setText("Link to reset password" +
+                    "http://localhost:8080/users/forgot-password/" + user.getId());
         } catch (MessagingException e) {
             e.printStackTrace();
         }
