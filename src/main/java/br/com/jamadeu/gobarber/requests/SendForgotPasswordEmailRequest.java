@@ -1,6 +1,6 @@
 package br.com.jamadeu.gobarber.requests;
 
-import br.com.jamadeu.gobarber.domain.User;
+import br.com.jamadeu.gobarber.domain.GoBarberUser;
 import br.com.jamadeu.gobarber.exception.BadRequestException;
 import br.com.jamadeu.gobarber.repository.UserRepository;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -21,8 +21,8 @@ public class SendForgotPasswordEmailRequest {
             required = true)
     private String username;
 
-    public User toUser(UserRepository userRepository) {
-        return userRepository.findByUsername(this.username)
+    public GoBarberUser toUser(UserRepository userRepository) {
+        return userRepository.findByUsername(username)
                 .orElseThrow(() -> new BadRequestException("User not found"));
     }
 }

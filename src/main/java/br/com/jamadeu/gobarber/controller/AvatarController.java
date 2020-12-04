@@ -1,6 +1,6 @@
 package br.com.jamadeu.gobarber.controller;
 
-import br.com.jamadeu.gobarber.domain.User;
+import br.com.jamadeu.gobarber.domain.GoBarberUser;
 import br.com.jamadeu.gobarber.requests.ReplaceUserRequest;
 import br.com.jamadeu.gobarber.service.AvatarService;
 import br.com.jamadeu.gobarber.service.UserService;
@@ -44,8 +44,8 @@ public class AvatarController {
             @ApiResponse(responseCode = "204", description = "Successful operation"),
             @ApiResponse(responseCode = "400", description = "When user not found")
     })
-    public ResponseEntity<User> uploadAvatar(@PathVariable Long id, @RequestParam MultipartFile avatar) {
-        User user = userService.findByIdOrThrowBadRequestException(id);
+    public ResponseEntity<GoBarberUser> uploadAvatar(@PathVariable Long id, @RequestParam MultipartFile avatar) {
+        GoBarberUser user = userService.findByIdOrThrowBadRequestException(id);
         Resource avatarSaved = avatarService.save(avatar);
         String url = MvcUriComponentsBuilder
                 .fromMethodName(AvatarController.class, "getFile", avatarSaved.getFilename()).build().toString();

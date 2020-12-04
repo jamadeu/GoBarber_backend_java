@@ -1,6 +1,6 @@
 package br.com.jamadeu.gobarber.repository;
 
-import br.com.jamadeu.gobarber.domain.User;
+import br.com.jamadeu.gobarber.domain.GoBarberUser;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,10 +9,10 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByEmail(String email);
+public interface UserRepository extends JpaRepository<GoBarberUser, Long> {
+    Optional<GoBarberUser> findByEmail(String email);
 
-    Page<User> findByIsProviderTrue(Pageable pageable);
+    Page<GoBarberUser> findByIsProviderTrue(Pageable pageable);
 
-    Optional<User> findByUsername(String username);
+    Optional<GoBarberUser> findByUsername(String username);
 }

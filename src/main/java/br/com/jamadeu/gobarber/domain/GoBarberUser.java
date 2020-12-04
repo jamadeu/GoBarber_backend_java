@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Table(name = "users")
 @ToString(exclude = {"authorities"})
 @JsonIgnoreProperties(value = {"authorities"})
-public class User implements UserDetails {
+public class GoBarberUser implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -56,7 +56,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Arrays.stream(this.authorities.split(","))
+        return Arrays.stream(authorities.split(","))
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }

@@ -1,6 +1,6 @@
 package br.com.jamadeu.gobarber.integration;
 
-import br.com.jamadeu.gobarber.domain.User;
+import br.com.jamadeu.gobarber.domain.GoBarberUser;
 import br.com.jamadeu.gobarber.repository.UserRepository;
 import br.com.jamadeu.gobarber.requests.NewUserRequest;
 import br.com.jamadeu.gobarber.requests.ReplaceUserRequest;
@@ -35,13 +35,13 @@ import org.springframework.test.annotation.DirtiesContext;
 @AutoConfigureTestDatabase
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @Log4j2
-class UserControllerIT {
+class GoBarberUserControllerIT {
     @Autowired
     private TestRestTemplate testRestTemplate;
     @Autowired
     private UserRepository userRepository;
 
-    public static final User USER = User.builder()
+    public static final GoBarberUser USER = GoBarberUser.builder()
             .name("admin")
             .password("{bcrypt}$2a$10$w80PLxkKSJMlJR2//Y7zcekwzFK1k2tIuo/hf.7toZ5y2rEu0302i")
             .username("admin")
@@ -67,11 +67,11 @@ class UserControllerIT {
     void listAll_ReturnsListOfUsersInsidePageObject_WhenSuccessful() {
         String expectedName = userRepository.save(UserCreator.createUserToBeSaved()).getName();
         userRepository.save(USER);
-        PageableResponse<User> userPage = testRestTemplate.exchange(
+        PageableResponse<GoBarberUser> userPage = testRestTemplate.exchange(
                 "/users",
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<PageableResponse<User>>() {
+                new ParameterizedTypeReference<PageableResponse<GoBarberUser>>() {
                 }).getBody();
 
         Assertions.assertThat(userPage).isNotNull();
@@ -84,12 +84,12 @@ class UserControllerIT {
     @Test
     @DisplayName("findById returns user when successful")
     void findById_ReturnsUser_WhenSuccessful() {
-        User savedUser = userRepository.save(UserCreator.createUserToBeSaved());
+        GoBarberUser savedUser = userRepository.save(UserCreator.createUserToBeSaved());
         userRepository.save(USER);
         Long expectedId = savedUser.getId();
-        User user = testRestTemplate.getForObject(
+        GoBarberUser user = testRestTemplate.getForObject(
                 "/users/{id}",
-                User.class,
+                GoBarberUser.class,
                 expectedId
         );
 
@@ -102,11 +102,11 @@ class UserControllerIT {
     void findById_ReturnsStatusCode400BadRequest_WhenUserIsNotFound() {
         Long id = userRepository.save(USER).getId();
         id += 1L;
-        ResponseEntity<User> responseEntity = testRestTemplate.exchange(
+        ResponseEntity<GoBarberUser> responseEntity = testRestTemplate.exchange(
                 "/users/{id}",
                 HttpMethod.GET,
                 null,
-                User.class,
+                GoBarberUser.class,
                 id
         );
 
@@ -119,13 +119,13 @@ class UserControllerIT {
     void listAllProviders_ReturnsListOfUsersWhoIsProviderIsTrueInsidePageObject_WhenSuccessful() {
         userRepository.save(UserCreator.createUserToBeSaved());
         userRepository.save(USER);
-        User savedProvider = userRepository.save(UserCreator.createProviderToBeSaved());
+        GoBarberUser savedProvider = userRepository.save(UserCreator.createProviderToBeSaved());
         String expectedName = savedProvider.getName();
-        PageableResponse<User> providerPage = testRestTemplate.exchange(
+        PageableResponse<GoBarberUser> providerPage = testRestTemplate.exchange(
                 "/users/providers-all",
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<PageableResponse<User>>() {
+                new ParameterizedTypeReference<PageableResponse<GoBarberUser>>() {
                 }
         ).getBody();
 
@@ -141,10 +141,10 @@ class UserControllerIT {
     void save_ReturnsUser_WhenSuccessful() {
         userRepository.save(USER);
         NewUserRequest newUserRequest = NewUserRequestCreator.createNewUserRequest();
-        ResponseEntity<User> responseEntity = testRestTemplate.postForEntity(
+        ResponseEntity<GoBarberUser> responseEntity = testRestTemplate.postForEntity(
                 "/users",
                 newUserRequest,
-                User.class
+                GoBarberUser.class
         );
 
         Assertions.assertThat(responseEntity).isNotNull();
@@ -159,10 +159,10 @@ class UserControllerIT {
     void save_ReturnsStatusCode400_WhenAnyMandatoryUserArgumentIsEmpty() {
         userRepository.save(USER);
         NewUserRequest newUserRequest = new NewUserRequest();
-        ResponseEntity<User> responseEntity = testRestTemplate.postForEntity(
+        ResponseEntity<GoBarberUser> responseEntity = testRestTemplate.postForEntity(
                 "/users",
                 newUserRequest,
-                User.class
+                GoBarberUser.class
         );
 
         Assertions.assertThat(responseEntity).isNotNull();
@@ -175,10 +175,10 @@ class UserControllerIT {
         userRepository.save(USER);
         NewUserRequest newUserRequest = NewUserRequestCreator.createNewUserRequest();
         newUserRequest.setEmail("emailNotFormatted");
-        ResponseEntity<User> responseEntity = testRestTemplate.postForEntity(
+        ResponseEntity<GoBarberUser> responseEntity = testRestTemplate.postForEntity(
                 "/users",
                 newUserRequest,
-                User.class
+                GoBarberUser.class
         );
 
         Assertions.assertThat(responseEntity).isNotNull();
@@ -191,10 +191,10 @@ class UserControllerIT {
         userRepository.save(USER);
         NewUserRequest newUserRequest = NewUserRequestCreator.createNewUserRequest();
         newUserRequest.setPassword("123");
-        ResponseEntity<User> responseEntity = testRestTemplate.postForEntity(
+        ResponseEntity<GoBarberUser> responseEntity = testRestTemplate.postForEntity(
                 "/users",
                 newUserRequest,
-                User.class
+                GoBarberUser.class
         );
 
         Assertions.assertThat(responseEntity).isNotNull();
@@ -222,7 +222,7 @@ class UserControllerIT {
     @Test
     @DisplayName("replace returns status code 400 BadRequest when user is not found")
     void replace_ReturnsStatusCode400_WhenUserIsNotFound() {
-        User userNotExists = UserCreator.createValidUser();
+        GoBarberUser userNotExists = UserCreator.createValidUser();
         Long id = userRepository.save(USER).getId();
         userNotExists.setId(id + 1L);
         ResponseEntity<Void> responseEntity = testRestTemplate.exchange(
@@ -238,7 +238,7 @@ class UserControllerIT {
     @Test
     @DisplayName("delete deletes user when successful")
     void delete_DeletesUser_WhenSuccessful() {
-        User savedUser = userRepository.save(UserCreator.createUserToBeSaved());
+        GoBarberUser savedUser = userRepository.save(UserCreator.createUserToBeSaved());
         userRepository.save(USER);
         ResponseEntity<Void> responseEntity = testRestTemplate.exchange(
                 "/users/{id}",

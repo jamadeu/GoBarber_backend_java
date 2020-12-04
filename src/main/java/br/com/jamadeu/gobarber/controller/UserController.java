@@ -1,6 +1,6 @@
 package br.com.jamadeu.gobarber.controller;
 
-import br.com.jamadeu.gobarber.domain.User;
+import br.com.jamadeu.gobarber.domain.GoBarberUser;
 import br.com.jamadeu.gobarber.requests.NewUserRequest;
 import br.com.jamadeu.gobarber.requests.ReplaceUserRequest;
 import br.com.jamadeu.gobarber.requests.ResetPasswordRequest;
@@ -31,7 +31,7 @@ public class UserController {
             description = "The default size is 5, use the parameter to change the default value",
             tags = {"users"}
     )
-    public ResponseEntity<Page<User>> listAll(@ParameterObject Pageable pageable) {
+    public ResponseEntity<Page<GoBarberUser>> listAll(@ParameterObject Pageable pageable) {
         return new ResponseEntity<>(userService.listAll(pageable), HttpStatus.OK);
     }
 
@@ -43,7 +43,7 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "400", description = "When user does not found")
     })
-    public ResponseEntity<User> findById(@PathVariable long id) {
+    public ResponseEntity<GoBarberUser> findById(@PathVariable long id) {
         return new ResponseEntity<>(userService.findByIdOrThrowBadRequestException(id), HttpStatus.OK);
     }
 
@@ -52,7 +52,7 @@ public class UserController {
             description = "The default size is 5, use the parameter to change the default value",
             tags = {"users"}
     )
-    public ResponseEntity<Page<User>> listAllProviders(@ParameterObject Pageable pageable) {
+    public ResponseEntity<Page<GoBarberUser>> listAllProviders(@ParameterObject Pageable pageable) {
         return new ResponseEntity<>(userService.listAllProviders(pageable), HttpStatus.OK);
     }
 
@@ -68,7 +68,7 @@ public class UserController {
             @ApiResponse(responseCode = "204", description = "Successful operation"),
             @ApiResponse(responseCode = "400", description = "When there is an error with some mandatory field")
     })
-    public ResponseEntity<User> save(@RequestBody @Valid NewUserRequest newUserRequest) {
+    public ResponseEntity<GoBarberUser> save(@RequestBody @Valid NewUserRequest newUserRequest) {
         return new ResponseEntity<>(userService.save(newUserRequest), HttpStatus.CREATED);
     }
 
@@ -80,7 +80,7 @@ public class UserController {
             @ApiResponse(responseCode = "204", description = "Successful operation"),
             @ApiResponse(responseCode = "400", description = "When user not found")
     })
-    public ResponseEntity<User> replace(@RequestBody @Valid ReplaceUserRequest replaceUserRequest) {
+    public ResponseEntity<GoBarberUser> replace(@RequestBody @Valid ReplaceUserRequest replaceUserRequest) {
         userService.replace(replaceUserRequest);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

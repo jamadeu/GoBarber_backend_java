@@ -1,6 +1,6 @@
 package br.com.jamadeu.gobarber.requests;
 
-import br.com.jamadeu.gobarber.domain.User;
+import br.com.jamadeu.gobarber.domain.GoBarberUser;
 import br.com.jamadeu.gobarber.exception.BadRequestException;
 import br.com.jamadeu.gobarber.repository.UserRepository;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -58,25 +58,25 @@ public class ReplaceUserRequest {
     )
     private String avatar;
 
-    public User toUser(@NotNull UserRepository userRepository) {
-        User savedUser = userRepository.findById(this.id)
+    public GoBarberUser toUser(@NotNull UserRepository userRepository) {
+        GoBarberUser savedUser = userRepository.findById(id)
                 .orElseThrow(() -> new BadRequestException("User not found"));
-        if (!this.email.equals(savedUser.getEmail()) && userRepository.findByEmail(this.email).isPresent()) {
-            throw new BadRequestException("This email is already in use: " + this.email);
+        if (!email.equals(savedUser.getEmail()) && userRepository.findByEmail(email).isPresent()) {
+            throw new BadRequestException("This email is already in use: " + email);
         }
-        if (!this.username.equals(savedUser.getUsername()) && userRepository.findByUsername(this.username).isPresent()) {
-            throw new BadRequestException("This username is  already in use: " + this.username);
+        if (!username.equals(savedUser.getUsername()) && userRepository.findByUsername(username).isPresent()) {
+            throw new BadRequestException("This username is  already in use: " + username);
         }
         PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-        String passwordEncoded = passwordEncoder.encode(this.password);
-        return User.builder()
+        String passwordEncoded = passwordEncoder.encode(password);
+        return GoBarberUser.builder()
                 .id(savedUser.getId())
-                .name(this.name)
-                .username(this.username)
-                .email(this.email)
+                .name(name)
+                .username(username)
+                .email(email)
                 .password(passwordEncoded)
-                .isProvider(this.isProvider)
-                .avatar(this.avatar)
+                .isProvider(isProvider)
+                .avatar(avatar)
                 .build();
     }
 }

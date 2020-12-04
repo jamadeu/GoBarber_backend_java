@@ -27,13 +27,13 @@ public class AvatarService {
         String filename = UUID.randomUUID().toString() + extension ;
 
         try {
-            Files.copy(file.getInputStream(), this.root.resolve(filename));
+            Files.copy(file.getInputStream(), root.resolve(filename));
         } catch (FileAlreadyExistsException e) {
             throw new BadRequestException("File already exists - " + filename);
         } catch (IOException e) {
             throw new BadRequestException("Error to save file");
         }
-        return this.load(filename);
+        return load(filename);
     }
 
     public Resource load(String filename) {

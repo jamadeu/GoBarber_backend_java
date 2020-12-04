@@ -1,6 +1,6 @@
 package br.com.jamadeu.gobarber.service;
 
-import br.com.jamadeu.gobarber.domain.User;
+import br.com.jamadeu.gobarber.domain.GoBarberUser;
 import br.com.jamadeu.gobarber.exception.BadRequestException;
 import br.com.jamadeu.gobarber.repository.UserRepository;
 import br.com.jamadeu.gobarber.requests.NewUserRequest;
@@ -20,22 +20,22 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
 
-    public Page<User> listAll(Pageable pageable) {
+    public Page<GoBarberUser> listAll(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
 
-    public User findByIdOrThrowBadRequestException(long id) {
+    public GoBarberUser findByIdOrThrowBadRequestException(long id) {
         return userRepository.findById(id).orElseThrow(
                 () -> new BadRequestException("User not found")
         );
     }
 
-    public Page<User> listAllProviders(Pageable pageable) {
+    public Page<GoBarberUser> listAllProviders(Pageable pageable) {
         return userRepository.findByIsProviderTrue(pageable);
     }
 
     @Transactional
-    public User save(NewUserRequest newUserRequest) {
+    public GoBarberUser save(NewUserRequest newUserRequest) {
         return userRepository.save(newUserRequest.toUser(userRepository));
     }
 
@@ -46,7 +46,7 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public void delete(Long id) {
-        userRepository.delete(this.findByIdOrThrowBadRequestException(id));
+        userRepository.delete(findByIdOrThrowBadRequestException(id));
     }
 
     @Override

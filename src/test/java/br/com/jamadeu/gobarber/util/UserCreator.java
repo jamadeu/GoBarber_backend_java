@@ -1,11 +1,11 @@
 package br.com.jamadeu.gobarber.util;
 
-import br.com.jamadeu.gobarber.domain.User;
+import br.com.jamadeu.gobarber.domain.GoBarberUser;
 
 public class UserCreator {
 
-    public static User createUserToBeSaved() {
-        return User.builder()
+    public static GoBarberUser createUserToBeSaved() {
+        return GoBarberUser.builder()
                 .name("User")
                 .username("username")
                 .email("user@gobarber.com")
@@ -15,8 +15,8 @@ public class UserCreator {
                 .build();
     }
 
-    public static User createUserToBeSavedWithPasswordEncoded() {
-        return User.builder()
+    public static GoBarberUser createUserToBeSavedWithPasswordEncoded() {
+        return GoBarberUser.builder()
                 .name("User")
                 .username("username")
                 .email("user@gobarber.com")
@@ -26,8 +26,8 @@ public class UserCreator {
                 .build();
     }
 
-    public static User createProviderToBeSaved() {
-        return User.builder()
+    public static GoBarberUser createProviderToBeSaved() {
+        return GoBarberUser.builder()
                 .name("Provider")
                 .username("providerUsername")
                 .email("provider@gobarber.com")
@@ -37,8 +37,8 @@ public class UserCreator {
                 .build();
     }
 
-    public static User createValidUser() {
-        return User.builder()
+    public static GoBarberUser createValidUser() {
+        return GoBarberUser.builder()
                 .id(1L)
                 .name("User")
                 .username("username")
@@ -48,8 +48,8 @@ public class UserCreator {
                 .build();
     }
 
-    public static User createValidProvider() {
-        return User.builder()
+    public static GoBarberUser createValidProvider() {
+        return GoBarberUser.builder()
                 .id(2L)
                 .name("Provider")
                 .username("providerUsername")

@@ -1,6 +1,6 @@
 package br.com.jamadeu.gobarber.requests;
 
-import br.com.jamadeu.gobarber.domain.User;
+import br.com.jamadeu.gobarber.domain.GoBarberUser;
 import br.com.jamadeu.gobarber.exception.BadRequestException;
 import br.com.jamadeu.gobarber.repository.UserRepository;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -57,26 +57,26 @@ public class NewUserRequest {
 
     private String authorities = "ROLE_USER";
 
-    public User toUser(@NotNull UserRepository userRepository) {
-        if (userRepository.findByEmail(this.email).isPresent()) {
-            throw new BadRequestException("This email is already in use: " + this.email);
+    public GoBarberUser toUser(@NotNull UserRepository userRepository) {
+        if (userRepository.findByEmail(email).isPresent()) {
+            throw new BadRequestException("This email is already in use: " + email);
         }
-        if (userRepository.findByUsername(this.username).isPresent()) {
-            throw new BadRequestException("This username is already in use: " + this.username);
+        if (userRepository.findByUsername(username).isPresent()) {
+            throw new BadRequestException("This username is already in use: " + username);
         }
-        if (this.isProvider()) {
-            this.setAuthorities("ROLE_PROVIDER");
+        if (isProvider()) {
+            setAuthorities("ROLE_PROVIDER");
         }
         PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-        String passwordEncoded = passwordEncoder.encode(this.password);
-        return User.builder()
-                .name(this.name)
-                .username(this.username)
-                .email(this.email)
+        String passwordEncoded = passwordEncoder.encode(password);
+        return GoBarberUser.builder()
+                .name(name)
+                .username(username)
+                .email(email)
                 .password(passwordEncoded)
-                .avatar(this.avatar)
-                .isProvider(this.isProvider)
-                .authorities(this.authorities)
+                .avatar(avatar)
+                .isProvider(isProvider)
+                .authorities(authorities)
                 .build();
     }
 }

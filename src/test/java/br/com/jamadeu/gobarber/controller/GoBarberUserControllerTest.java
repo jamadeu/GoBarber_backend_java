@@ -1,6 +1,6 @@
 package br.com.jamadeu.gobarber.controller;
 
-import br.com.jamadeu.gobarber.domain.User;
+import br.com.jamadeu.gobarber.domain.GoBarberUser;
 import br.com.jamadeu.gobarber.requests.NewUserRequest;
 import br.com.jamadeu.gobarber.requests.ReplaceUserRequest;
 import br.com.jamadeu.gobarber.service.UserService;
@@ -27,7 +27,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.List;
 
 @ExtendWith(SpringExtension.class)
-class UserControllerTest {
+class GoBarberUserControllerTest {
     @InjectMocks
     private UserController userController;
 
@@ -36,8 +36,8 @@ class UserControllerTest {
 
     @BeforeEach
     void setup() {
-        PageImpl<User> userPage = new PageImpl<>(List.of(UserCreator.createValidUser()));
-        PageImpl<User> providerPage = new PageImpl<>(List.of(UserCreator.createValidProvider()));
+        PageImpl<GoBarberUser> userPage = new PageImpl<>(List.of(UserCreator.createValidUser()));
+        PageImpl<GoBarberUser> providerPage = new PageImpl<>(List.of(UserCreator.createValidProvider()));
         BDDMockito.when(userServiceMock.listAll(ArgumentMatchers.any(PageRequest.class)))
                 .thenReturn(userPage);
         BDDMockito.when(userServiceMock.findByIdOrThrowBadRequestException(ArgumentMatchers.anyLong()))
@@ -54,7 +54,7 @@ class UserControllerTest {
     @DisplayName("listAll returns list of users inside page object when successful")
     void listAll_ReturnsListOfUsersInsidePageObject_WhenSuccessful() {
         String expectedName = UserCreator.createValidUser().getName();
-        Page<User> userPage = userController.listAll(PageRequest.of(1, 1)).getBody();
+        Page<GoBarberUser> userPage = userController.listAll(PageRequest.of(1, 1)).getBody();
 
         Assertions.assertThat(userPage).isNotNull();
         Assertions.assertThat(userPage.toList())
@@ -67,7 +67,7 @@ class UserControllerTest {
     @DisplayName("findById returns user when successful")
     void findById_ReturnsUser_WhenSuccessful() {
         String expectedName = UserCreator.createValidUser().getName();
-        User user = userController.findById(1).getBody();
+        GoBarberUser user = userController.findById(1).getBody();
 
         Assertions.assertThat(user).isNotNull();
         Assertions.assertThat(user.getId()).isNotNull().isEqualTo(1);
@@ -78,7 +78,7 @@ class UserControllerTest {
     @DisplayName("listAllProvider returns list of users who isProvider is true inside page object when successful")
     void listAllProviders_ReturnsListOfUsersWhoIsProviderIsTrueInsidePageObject_WhenSuccessful() {
         String expectedName = UserCreator.createValidProvider().getName();
-        Page<User> providerPage = userController.listAllProviders(PageRequest.of(1, 1)).getBody();
+        Page<GoBarberUser> providerPage = userController.listAllProviders(PageRequest.of(1, 1)).getBody();
 
         Assertions.assertThat(providerPage).isNotNull();
         Assertions.assertThat(providerPage.toList())
@@ -90,7 +90,7 @@ class UserControllerTest {
     @Test
     @DisplayName("save returns user when successful")
     void save_ReturnsUser_WhenSuccessful() {
-        User user = userController.save(NewUserRequestCreator.createNewUserRequest()).getBody();
+        GoBarberUser user = userController.save(NewUserRequestCreator.createNewUserRequest()).getBody();
 
         Assertions.assertThat(user)
                 .isNotNull()
@@ -102,7 +102,7 @@ class UserControllerTest {
     void replace_UpdatesUser_WhenSuccessful() {
         Assertions.assertThatCode(() -> userController.replace(ReplaceUserRequestCreator.createReplaceUserRequest()))
                 .doesNotThrowAnyException();
-        ResponseEntity<User> responseEntity = userController.replace(ReplaceUserRequestCreator.createReplaceUserRequest());
+        ResponseEntity<GoBarberUser> responseEntity = userController.replace(ReplaceUserRequestCreator.createReplaceUserRequest());
 
         Assertions.assertThat(responseEntity).isNotNull();
         Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
