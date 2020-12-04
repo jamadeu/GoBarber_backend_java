@@ -8,6 +8,21 @@ spring:
     url: jdbc:mysql://localhost:3306/gobarber?createDatabaseIfNotExist=true&useTimezone=true&serverTimezone=UTC
     username: root
     password: root
+  mail:
+    host: smtp.mailtrap.io
+    port: 2525
+    username: 17195529dbc747
+    password: 89b405645d89c9
+    smtp:
+      auth: true
+      ssl:
+        enable: false
+      starttls:
+        enable: true
+        required: true
+    test-connection: true
+
+
 
   jpa:
     hibernate:
@@ -18,3 +33,9 @@ logging:
     org:
       hibernate:
         SQL: DEBUG
+
+  spring.mail.properties.mail.smtp.auth=true
+  spring.mail.properties.mail.smtp.starttls.enable=true
+  spring.mail.properties.mail.smtp.starttls.required=true
+  spring.mail.properties.mail.smtp.ssl.enable=false
+  spring.mail.test-connection=true
