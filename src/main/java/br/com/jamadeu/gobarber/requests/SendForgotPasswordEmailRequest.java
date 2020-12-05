@@ -14,7 +14,7 @@ import javax.validation.constraints.NotEmpty;
 @Builder
 public class SendForgotPasswordEmailRequest {
 
-    @NotEmpty(message = "The user name can not be empty")
+    @NotEmpty(message = "The user' username can not be empty")
     @Schema(description = "This is the user's username, this must be unique.",
             example = "name",
             required = true)
