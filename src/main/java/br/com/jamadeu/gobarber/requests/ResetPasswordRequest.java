@@ -1,15 +1,10 @@
 package br.com.jamadeu.gobarber.requests;
 
-import br.com.jamadeu.gobarber.domain.GoBarberUser;
-import br.com.jamadeu.gobarber.exception.BadRequestException;
-import br.com.jamadeu.gobarber.repository.UserRepository;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
@@ -35,15 +30,4 @@ public class ResetPasswordRequest {
     @Size(min = 6, message = "The user password must be at least 6 characters")
     @Schema(description = "This is a user's new password unencrypted", required = true)
     private String newPassword;
-
-    public GoBarberUser toUser(UserRepository userRepository) {
-        GoBarberUser user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new BadRequestException("User not found"));
-        PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
-            throw new BadRequestException("Old password is wrong");
-        }
-        user.setPassword(passwordEncoder.encode(newPassword));
-        return user;
-    }
 }

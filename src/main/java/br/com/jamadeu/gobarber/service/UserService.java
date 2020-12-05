@@ -83,6 +83,12 @@ public class UserService implements UserDetailsService {
     }
 
     public void resetPassword(ResetPasswordRequest resetPasswordRequest) {
-        userRepository.save(resetPasswordRequest.toUser(userRepository));
+        GoBarberUser user = userRepository.findByUsername(resetPasswordRequest.getUsername())
+                .orElseThrow(() -> new BadRequestException("User not found"));
+        if (!passwordEncoder.matches(resetPasswordRequest.getOldPassword(), user.getPassword())) {
+            throw new BadRequestException("Old password is wrong");
+        }
+        user.setPassword(passwordEncoder.encode(resetPasswordRequest.getNewPassword()));
+        userRepository.save(user);
     }
 }
