@@ -100,9 +100,8 @@ class GoBarberUserControllerTest {
     @Test
     @DisplayName("replace updates user when successful")
     void replace_UpdatesUser_WhenSuccessful() {
-        Assertions.assertThatCode(() -> userController.replace(ReplaceUserRequestCreator.createReplaceUserRequest()))
-                .doesNotThrowAnyException();
-        ResponseEntity<GoBarberUser> responseEntity = userController.replace(ReplaceUserRequestCreator.createReplaceUserRequest());
+        ResponseEntity<GoBarberUser> responseEntity = userController.replace(
+                ReplaceUserRequestCreator.createReplaceUserRequest());
 
         Assertions.assertThat(responseEntity).isNotNull();
         Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
