@@ -23,6 +23,8 @@ public class EmailService {
         MimeMessageHelper helper = new MimeMessageHelper(message);
         try {
             helper.setTo(user.getEmail());
+            helper.setFrom("noreply@gobarber.com");
+            helper.setSubject("Reset password");
             helper.setText("Link to reset password" +
                     "http://localhost:8080/users/forgot-password/" + user.getId());
         } catch (MessagingException e) {
