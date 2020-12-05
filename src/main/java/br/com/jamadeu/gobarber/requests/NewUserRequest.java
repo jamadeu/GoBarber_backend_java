@@ -50,6 +50,10 @@ public class NewUserRequest {
     )
     private String avatar;
 
+    @Schema(description = "This is the user's roles",
+            defaultValue = "ROLE_USER",
+            nullable = true
+    )
     private String authorities = "ROLE_USER";
 
     public GoBarberUser toUser() {

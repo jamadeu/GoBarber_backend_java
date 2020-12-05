@@ -2,6 +2,7 @@ package br.com.jamadeu.gobarber.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -50,8 +51,16 @@ public class GoBarberUser implements UserDetails {
     @Column(columnDefinition = "boolean default false")
     private boolean isProvider;
 
+    @Schema(description = "This is the user's avatar",
+            defaultValue = "null",
+            nullable = true
+    )
     private String avatar;
 
+    @Schema(description = "This is the user's roles",
+            defaultValue = "ROLE_USER",
+            nullable = true
+    )
     private String authorities;
 
     @Override
