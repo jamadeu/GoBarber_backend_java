@@ -1,15 +1,11 @@
 package br.com.jamadeu.gobarber.requests;
 
 import br.com.jamadeu.gobarber.domain.GoBarberUser;
-import br.com.jamadeu.gobarber.exception.BadRequestException;
-import br.com.jamadeu.gobarber.repository.UserRepository;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.validation.constraints.*;
 
@@ -58,23 +54,13 @@ public class ReplaceUserRequest {
     )
     private String avatar;
 
-    public GoBarberUser toUser(@NotNull UserRepository userRepository) {
-        GoBarberUser savedUser = userRepository.findById(id)
-                .orElseThrow(() -> new BadRequestException("User not found"));
-        if (!email.equals(savedUser.getEmail()) && userRepository.findByEmail(email).isPresent()) {
-            throw new BadRequestException("This email is already in use: " + email);
-        }
-        if (!username.equals(savedUser.getUsername()) && userRepository.findByUsername(username).isPresent()) {
-            throw new BadRequestException("This username is  already in use: " + username);
-        }
-        PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-        String passwordEncoded = passwordEncoder.encode(password);
+    public GoBarberUser toUser() {
         return GoBarberUser.builder()
-                .id(savedUser.getId())
+                .id(id)
                 .name(name)
                 .username(username)
                 .email(email)
-                .password(passwordEncoded)
+                .password(password)
                 .isProvider(isProvider)
                 .avatar(avatar)
                 .build();

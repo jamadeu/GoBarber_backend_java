@@ -56,7 +56,19 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public void replace(ReplaceUserRequest replaceUserRequest) {
-        userRepository.save(replaceUserRequest.toUser(userRepository));
+        GoBarberUser userToReplace = replaceUserRequest.toUser();
+        GoBarberUser savedUser = userRepository.findById(userToReplace.getId())
+                .orElseThrow(() -> new BadRequestException("User not found"));
+        if (!userToReplace.getEmail().equals(savedUser.getEmail()) &&
+                userRepository.findByEmail(userToReplace.getEmail()).isPresent()) {
+            throw new BadRequestException("This email is already in use: " + userToReplace.getEmail());
+        }
+        if (!userToReplace.getUsername().equals(savedUser.getUsername()) &&
+                userRepository.findByUsername(userToReplace.getUsername()).isPresent()) {
+            throw new BadRequestException("This username is  already in use: " + userToReplace.getUsername());
+        }
+        userToReplace.setPassword(savedUser.getPassword());
+        userRepository.save(userToReplace);
     }
 
     @Transactional
