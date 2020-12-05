@@ -1,6 +1,7 @@
 package br.com.jamadeu.gobarber.service;
 
 import br.com.jamadeu.gobarber.domain.GoBarberUser;
+import br.com.jamadeu.gobarber.exception.BadRequestException;
 import br.com.jamadeu.gobarber.repository.UserRepository;
 import br.com.jamadeu.gobarber.requests.SendForgotPasswordEmailRequest;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,8 @@ public class EmailService {
     private final JavaMailSenderImpl emailSender;
 
     public String sendForgotPasswordEmail(SendForgotPasswordEmailRequest sendForgotPasswordEmailRequest) {
-        GoBarberUser user = sendForgotPasswordEmailRequest.toUser(userRepository);
+        GoBarberUser user = userRepository.findByUsername(sendForgotPasswordEmailRequest.getUsername())
+                .orElseThrow(() -> new BadRequestException("User not found"));
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
         try {
