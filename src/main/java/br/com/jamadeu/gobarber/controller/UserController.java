@@ -1,6 +1,7 @@
 package br.com.jamadeu.gobarber.controller;
 
 import br.com.jamadeu.gobarber.domain.GoBarberUser;
+import br.com.jamadeu.gobarber.exception.BadRequestException;
 import br.com.jamadeu.gobarber.requests.NewUserRequest;
 import br.com.jamadeu.gobarber.requests.ReplaceUserRequest;
 import br.com.jamadeu.gobarber.requests.ResetPasswordRequest;
@@ -14,10 +15,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
+import javax.validation.constraints.AssertTrue;
 
 
 @RestController
@@ -73,14 +78,19 @@ public class UserController {
     }
 
     @PutMapping
-    @Operation(summary = "Replace an existing user",
+    @Operation(summary = "Replace an existing user, the user to be replaced must be logged in",
             tags = {"users"}
     )
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Successful operation"),
-            @ApiResponse(responseCode = "400", description = "When user not found")
+            @ApiResponse(responseCode = "400", description = "When user not found"),
+            @ApiResponse(responseCode = "403", description = "When the logged in user is not the same user that will be replaced")
     })
-    public ResponseEntity<GoBarberUser> replace(@RequestBody @Valid ReplaceUserRequest replaceUserRequest) {
+    public ResponseEntity<GoBarberUser> replace(@RequestBody @Valid ReplaceUserRequest replaceUserRequest,
+                                                @AuthenticationPrincipal UserDetails userDetails) {
+        if (!userDetails.getUsername().equals(replaceUserRequest.getUsername())) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
         userService.replace(replaceUserRequest);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
