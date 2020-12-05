@@ -65,7 +65,7 @@ public class UserService implements UserDetailsService {
         }
         if (!userToReplace.getUsername().equals(savedUser.getUsername()) &&
                 userRepository.findByUsername(userToReplace.getUsername()).isPresent()) {
-            throw new BadRequestException("This username is  already in use: " + userToReplace.getUsername());
+            throw new BadRequestException("This username is already in use: " + userToReplace.getUsername());
         }
         userToReplace.setPassword(savedUser.getPassword());
         userRepository.save(userToReplace);

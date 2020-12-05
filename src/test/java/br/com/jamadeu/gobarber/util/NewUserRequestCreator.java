@@ -14,4 +14,16 @@ public class NewUserRequestCreator {
                 .authorities(user.getAuthorities().toString())
                 .build();
     }
+
+    public static NewUserRequest createNewProviderRequest() {
+        GoBarberUser provider = UserCreator.createProviderToBeSaved();
+        return NewUserRequest.builder()
+                .name(provider.getName())
+                .username(provider.getUsername())
+                .email(provider.getEmail())
+                .password(provider.getPassword())
+                .isProvider(provider.isProvider())
+                .authorities(provider.getAuthorities().toString())
+                .build();
+    }
 }

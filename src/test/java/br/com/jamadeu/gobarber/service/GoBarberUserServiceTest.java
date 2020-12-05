@@ -3,6 +3,8 @@ package br.com.jamadeu.gobarber.service;
 import br.com.jamadeu.gobarber.domain.GoBarberUser;
 import br.com.jamadeu.gobarber.exception.BadRequestException;
 import br.com.jamadeu.gobarber.repository.UserRepository;
+import br.com.jamadeu.gobarber.requests.ReplaceUserRequest;
+import br.com.jamadeu.gobarber.requests.ResetPasswordRequest;
 import br.com.jamadeu.gobarber.util.NewUserRequestCreator;
 import br.com.jamadeu.gobarber.util.ReplaceUserRequestCreator;
 import br.com.jamadeu.gobarber.util.ResetPasswordRequestCreator;
@@ -21,7 +23,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
@@ -35,14 +36,10 @@ class GoBarberUserServiceTest {
     @Mock
     private UserRepository userRepositoryMock;
 
-    @Mock
-    private PasswordEncoder passwordEncoder;
-
     @BeforeEach
     void setup() {
         PageImpl<GoBarberUser> userPage = new PageImpl<>(List.of(UserCreator.createValidUser()));
         PageImpl<GoBarberUser> providerPage = new PageImpl<>(List.of(UserCreator.createValidProvider()));
-        String passwordEncoded = "{bcrypt}$2a$10$pncFwVKOhZk60qmP8Y.Sjuuj7pBzsVT5OxZdC.OKVHjja6jC/murG";
         BDDMockito.when(userRepositoryMock.findAll(ArgumentMatchers.any(PageRequest.class)))
                 .thenReturn(userPage);
         BDDMockito.when(userRepositoryMock.findById(ArgumentMatchers.anyLong()))
@@ -54,10 +51,8 @@ class GoBarberUserServiceTest {
         BDDMockito.doNothing().when(userRepositoryMock).delete(ArgumentMatchers.any(GoBarberUser.class));
         BDDMockito.when(userRepositoryMock.findByUsername(ArgumentMatchers.anyString()))
                 .thenReturn(Optional.of(UserCreator.createValidUser()));
-        BDDMockito.when(passwordEncoder.encode(ArgumentMatchers.anyString()))
-                .thenReturn(passwordEncoded);
-        BDDMockito.when(passwordEncoder.matches(ArgumentMatchers.anyString(), ArgumentMatchers.anyString()))
-                .thenReturn(true);
+        BDDMockito.when(userRepositoryMock.findByEmail(ArgumentMatchers.anyString())).
+                thenReturn(Optional.empty());
     }
 
     @Test
@@ -109,7 +104,7 @@ class GoBarberUserServiceTest {
 
     @Test
     @DisplayName("save returns user when successful")
-    void save_ReturnsAnimUser_WhenSuccessful() {
+    void save_ReturnsUser_WhenSuccessful() {
         BDDMockito.when(userRepositoryMock.findByUsername(ArgumentMatchers.anyString())).
                 thenReturn(Optional.empty());
         GoBarberUser user = userService.save(NewUserRequestCreator.createNewUserRequest());
@@ -120,10 +115,79 @@ class GoBarberUserServiceTest {
     }
 
     @Test
+    @DisplayName("save returns provider when successful")
+    void save_ReturnsProvider_WhenSuccessful() {
+        BDDMockito.when(userRepositoryMock.findByUsername(ArgumentMatchers.anyString())).
+                thenReturn(Optional.empty());
+        BDDMockito.when(userRepositoryMock.save(ArgumentMatchers.any(GoBarberUser.class)))
+                .thenReturn(UserCreator.createValidProvider());
+        GoBarberUser provider = userService.save(NewUserRequestCreator.createNewProviderRequest());
+
+        Assertions.assertThat(provider)
+                .isNotNull()
+                .isEqualTo(UserCreator.createValidProvider());
+    }
+
+    @Test
+    @DisplayName("save returns status code 400 bad request when email is already in use")
+    void save_ReturnsStatusCode400BadRequest_WhenEmailIsAlreadyInUse() {
+        BDDMockito.when(userRepositoryMock.findByUsername(ArgumentMatchers.anyString())).
+                thenReturn(Optional.empty());
+        BDDMockito.when(userRepositoryMock.findByEmail(ArgumentMatchers.anyString())).
+                thenReturn(Optional.of(UserCreator.createValidUser()));
+
+        Assertions.assertThatExceptionOfType(BadRequestException.class)
+                .isThrownBy(() -> userService.save(NewUserRequestCreator.createNewUserRequest()));
+    }
+
+    @Test
+    @DisplayName("save returns status code 400 bad request when username is already in use")
+    void save_ReturnsStatusCode400BadRequest_WhenUsernameIsAlreadyInUse() {
+        Assertions.assertThatExceptionOfType(BadRequestException.class)
+                .isThrownBy(() -> userService.save(NewUserRequestCreator.createNewUserRequest()));
+    }
+
+    @Test
     @DisplayName("replace updates user when successful")
     void replace_UpdatesUser_WhenSuccessful() {
         Assertions.assertThatCode(() -> userService.replace(ReplaceUserRequestCreator.createReplaceUserRequest()))
                 .doesNotThrowAnyException();
+    }
+
+    @Test
+    @DisplayName("replace returns status code 400 bad request when user is not found")
+    void replace_ReturnsStatusCode400BadRequest_WhenUserIsNotFound() {
+        BDDMockito.when(userRepositoryMock.findById(ArgumentMatchers.anyLong())).
+                thenReturn(Optional.empty());
+
+        Assertions.assertThatExceptionOfType(BadRequestException.class)
+                .isThrownBy(() -> userService.replace(ReplaceUserRequestCreator.createReplaceUserRequest()));
+    }
+
+    @Test
+    @DisplayName("replace returns status code 400 bad request when email is already in use")
+    void replace_ReturnsStatusCode400BadRequest_WhenEmailIsAlreadyInUse() {
+        BDDMockito.when(userRepositoryMock.findByEmail(ArgumentMatchers.anyString())).
+                thenReturn(Optional.of(UserCreator.createValidUser()));
+        ReplaceUserRequest replaceUserRequest = ReplaceUserRequestCreator.createReplaceUserRequest();
+        replaceUserRequest.setEmail("email-already-in-use@test.com");
+
+        Assertions.assertThatExceptionOfType(BadRequestException.class)
+                .isThrownBy(() -> userService.replace(replaceUserRequest))
+                .withMessageContaining("This email is already in use: email-already-in-use@test.com");
+    }
+
+    @Test
+    @DisplayName("replace returns status code 400 bad request when username is already in use")
+    void replace_ReturnsStatusCode400BadRequest_WhenUsernameIsAlreadyInUse() {
+        BDDMockito.when(userRepositoryMock.findByUsername(ArgumentMatchers.anyString())).
+                thenReturn(Optional.of(UserCreator.createValidUser()));
+        ReplaceUserRequest replaceUserRequest = ReplaceUserRequestCreator.createReplaceUserRequest();
+        replaceUserRequest.setUsername("username-already-in-use");
+
+        Assertions.assertThatExceptionOfType(BadRequestException.class)
+                .isThrownBy(() -> userService.replace(replaceUserRequest))
+                .withMessageContaining("This username is already in use: username-already-in-use");
     }
 
     @Test
@@ -159,5 +223,15 @@ class GoBarberUserServiceTest {
     void resetPassword_UpdatesUserPassword_WhenSuccessful() {
         Assertions.assertThatCode(() -> userService.resetPassword(ResetPasswordRequestCreator.createResetPasswordRequest()))
                 .doesNotThrowAnyException();
+    }
+
+    @Test
+    @DisplayName("resetPassword returns status code 400 bad request when password is wrong")
+    void resetPassword_ReturnsStatusCode400BadRequest_WhenPasswordIsWrong() {
+        ResetPasswordRequest resetPasswordRequest = ResetPasswordRequestCreator.createResetPasswordRequest();
+        resetPasswordRequest.setOldPassword("wrong password");
+
+        Assertions.assertThatExceptionOfType(BadRequestException.class)
+                .isThrownBy(() -> userService.resetPassword(resetPasswordRequest));
     }
 }

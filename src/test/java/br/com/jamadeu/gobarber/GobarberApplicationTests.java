@@ -3,11 +3,11 @@ package br.com.jamadeu.gobarber;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+//@SpringBootTest
 class GobarberApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+    //	@Test
+    void contextLoads() {
+    }
 
 }

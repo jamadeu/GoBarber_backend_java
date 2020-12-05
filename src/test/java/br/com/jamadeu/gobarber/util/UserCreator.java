@@ -32,8 +32,8 @@ public class UserCreator {
                 .username("providerUsername")
                 .email("provider@gobarber.com")
                 .password("123123")
-                .authorities("ROLE_PROVIDER")
                 .isProvider(true)
+                .authorities("ROLE_USER")
                 .build();
     }
 
@@ -50,7 +50,7 @@ public class UserCreator {
 
     public static GoBarberUser createValidProvider() {
         return GoBarberUser.builder()
-                .id(2L)
+                .id(1L)
                 .name("Provider")
                 .username("providerUsername")
                 .email("provider@gobarber.com")
