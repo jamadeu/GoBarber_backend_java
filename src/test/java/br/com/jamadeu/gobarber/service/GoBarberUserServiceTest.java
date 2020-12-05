@@ -42,6 +42,7 @@ class GoBarberUserServiceTest {
     void setup() {
         PageImpl<GoBarberUser> userPage = new PageImpl<>(List.of(UserCreator.createValidUser()));
         PageImpl<GoBarberUser> providerPage = new PageImpl<>(List.of(UserCreator.createValidProvider()));
+        String passwordEncoded = "{bcrypt}$2a$10$pncFwVKOhZk60qmP8Y.Sjuuj7pBzsVT5OxZdC.OKVHjja6jC/murG";
         BDDMockito.when(userRepositoryMock.findAll(ArgumentMatchers.any(PageRequest.class)))
                 .thenReturn(userPage);
         BDDMockito.when(userRepositoryMock.findById(ArgumentMatchers.anyLong()))
@@ -53,6 +54,10 @@ class GoBarberUserServiceTest {
         BDDMockito.doNothing().when(userRepositoryMock).delete(ArgumentMatchers.any(GoBarberUser.class));
         BDDMockito.when(userRepositoryMock.findByUsername(ArgumentMatchers.anyString()))
                 .thenReturn(Optional.of(UserCreator.createValidUser()));
+        BDDMockito.when(passwordEncoder.encode(ArgumentMatchers.anyString()))
+                .thenReturn(passwordEncoded);
+        BDDMockito.when(passwordEncoder.matches(ArgumentMatchers.anyString(), ArgumentMatchers.anyString()))
+                .thenReturn(true);
     }
 
     @Test
