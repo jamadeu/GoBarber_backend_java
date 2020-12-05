@@ -1,19 +1,14 @@
 package br.com.jamadeu.gobarber.requests;
 
 import br.com.jamadeu.gobarber.domain.GoBarberUser;
-import br.com.jamadeu.gobarber.exception.BadRequestException;
-import br.com.jamadeu.gobarber.repository.UserRepository;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Data
@@ -57,23 +52,12 @@ public class NewUserRequest {
 
     private String authorities = "ROLE_USER";
 
-    public GoBarberUser toUser(@NotNull UserRepository userRepository) {
-        if (userRepository.findByEmail(email).isPresent()) {
-            throw new BadRequestException("This email is already in use: " + email);
-        }
-        if (userRepository.findByUsername(username).isPresent()) {
-            throw new BadRequestException("This username is already in use: " + username);
-        }
-        if (isProvider()) {
-            setAuthorities("ROLE_PROVIDER");
-        }
-        PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-        String passwordEncoded = passwordEncoder.encode(password);
+    public GoBarberUser toUser() {
         return GoBarberUser.builder()
                 .name(name)
                 .username(username)
                 .email(email)
-                .password(passwordEncoded)
+                .password(password)
                 .avatar(avatar)
                 .isProvider(isProvider)
                 .authorities(authorities)

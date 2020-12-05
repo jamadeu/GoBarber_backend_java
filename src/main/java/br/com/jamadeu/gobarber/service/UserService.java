@@ -12,6 +12,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
     public Page<GoBarberUser> listAll(Pageable pageable) {
         return userRepository.findAll(pageable);
@@ -36,7 +39,19 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public GoBarberUser save(NewUserRequest newUserRequest) {
-        return userRepository.save(newUserRequest.toUser(userRepository));
+        GoBarberUser newUser = newUserRequest.toUser();
+        if (userRepository.findByEmail(newUser.getEmail()).isPresent()) {
+            throw new BadRequestException("This email is already in use: " + newUser.getEmail());
+        }
+        if (userRepository.findByUsername(newUser.getUsername()).isPresent()) {
+            throw new BadRequestException("This username is already in use: " + newUser.getUsername());
+        }
+        if (newUser.isProvider()) {
+            newUser.setAuthorities("ROLE_PROVIDER");
+        }
+        String passwordEncoded = passwordEncoder.encode(newUser.getPassword());
+        newUser.setPassword(passwordEncoded);
+        return userRepository.save(newUser);
     }
 
     @Transactional
