@@ -1,7 +1,7 @@
 package br.com.jamadeu.gobarber.util;
 
-import br.com.jamadeu.gobarber.domain.GoBarberUser;
-import br.com.jamadeu.gobarber.requests.ResetPasswordRequest;
+import br.com.jamadeu.gobarber.user.domain.GoBarberUser;
+import br.com.jamadeu.gobarber.user.requests.ResetPasswordRequest;
 
 public class ResetPasswordRequestCreator {
     public static ResetPasswordRequest createResetPasswordRequest() {
