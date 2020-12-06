@@ -16,4 +16,6 @@ public class GoBarberWebMvcConfigurer implements WebMvcConfigurer {
         pageableHandler.setFallbackPageable(PageRequest.of(0, 5));
         resolvers.add(pageableHandler);
     }
+
+
 }
