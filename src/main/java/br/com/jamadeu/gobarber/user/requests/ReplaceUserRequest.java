@@ -43,11 +43,6 @@ public class ReplaceUserRequest {
     @Schema(description = "This is the user's password", required = true)
     private String password;
 
-    @Schema(description = "This records if the user is a provider",
-            defaultValue = "false"
-    )
-    private boolean isProvider;
-
     @Schema(description = "This is the user's avatar",
             defaultValue = "null",
             nullable = true
@@ -61,7 +56,6 @@ public class ReplaceUserRequest {
                 .username(username)
                 .email(email)
                 .password(password)
-                .isProvider(isProvider)
                 .avatar(avatar)
                 .build();
     }

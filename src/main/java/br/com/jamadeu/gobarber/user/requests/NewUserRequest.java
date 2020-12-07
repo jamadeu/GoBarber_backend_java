@@ -50,12 +50,6 @@ public class NewUserRequest {
     )
     private String avatar;
 
-    @Schema(description = "This is the user's roles",
-            defaultValue = "ROLE_USER",
-            nullable = true
-    )
-    private String authorities = "ROLE_USER";
-
     public GoBarberUser toUser() {
         return GoBarberUser.builder()
                 .name(name)
@@ -63,8 +57,7 @@ public class NewUserRequest {
                 .email(email)
                 .password(password)
                 .avatar(avatar)
-                .isProvider(isProvider)
-                .authorities(authorities)
+                .authorities("ROLE_USER")
                 .build();
     }
 }
