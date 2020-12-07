@@ -1,15 +1,15 @@
 package br.com.jamadeu.gobarber.appointment.controller;
 
 import br.com.jamadeu.gobarber.appointment.domain.Appointment;
+import br.com.jamadeu.gobarber.appointment.requests.NewAppointmentRequest;
 import br.com.jamadeu.gobarber.appointment.service.AppointmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("appointments")
@@ -30,5 +30,10 @@ public class AppointmentController {
     @GetMapping("/find-by-provider/{providerId}")
     public ResponseEntity<Page<Appointment>> findByProviderId(@PathVariable Long providerId){
         return new ResponseEntity<>(appointmentService.findByProviderId(providerId), HttpStatus.OK);
+    }
+
+    @PostMapping
+    public ResponseEntity<Appointment> create(@RequestBody @Valid NewAppointmentRequest newAppointmentRequest){
+        return new ResponseEntity<>(appointmentService.create(newAppointmentRequest), HttpStatus.CREATED);
     }
 }
