@@ -1,5 +1,6 @@
 package br.com.jamadeu.gobarber.user.repository;
 
+import br.com.jamadeu.gobarber.user.domain.GoBarberProvider;
 import br.com.jamadeu.gobarber.user.domain.GoBarberUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -7,8 +8,8 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<GoBarberUser, Long> {
-    Optional<GoBarberUser> findByEmail(String email);
+public interface ProviderRepository extends JpaRepository<GoBarberUser, Long> {
+    Optional<GoBarberProvider> findByEmail(String email);
 
-    Optional<GoBarberUser> findByUsername(String username);
+    Optional<GoBarberProvider> findByUsername(String username);
 }
