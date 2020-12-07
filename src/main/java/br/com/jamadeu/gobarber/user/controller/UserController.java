@@ -47,15 +47,6 @@ public class UserController {
         return new ResponseEntity<>(userService.findByIdOrThrowBadRequestException(id), HttpStatus.OK);
     }
 
-    @GetMapping(path = "/providers-all")
-    @Operation(summary = "Lists all users who are providers",
-            description = "The default size is 5, use the parameter to change the default value",
-            tags = {"users"}
-    )
-    public ResponseEntity<Page<GoBarberUser>> listAllProviders(@ParameterObject Pageable pageable) {
-        return new ResponseEntity<>(userService.listAllProviders(pageable), HttpStatus.OK);
-    }
-
     @PostMapping
     @Transactional
     @Operation(summary = "Create a new user",
