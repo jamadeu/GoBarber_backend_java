@@ -1,7 +1,7 @@
 package br.com.jamadeu.gobarber.user.service;
 
-import br.com.jamadeu.gobarber.user.domain.GoBarberUser;
 import br.com.jamadeu.gobarber.shared.exception.BadRequestException;
+import br.com.jamadeu.gobarber.user.domain.GoBarberUser;
 import br.com.jamadeu.gobarber.user.repository.UserRepository;
 import br.com.jamadeu.gobarber.user.requests.NewUserRequest;
 import br.com.jamadeu.gobarber.user.requests.ReplaceUserRequest;
@@ -33,10 +33,6 @@ public class UserService implements UserDetailsService {
         );
     }
 
-    public Page<GoBarberUser> listAllProviders(Pageable pageable) {
-        return userRepository.findByIsProviderTrue(pageable);
-    }
-
     @Transactional
     public GoBarberUser save(NewUserRequest newUserRequest) {
         GoBarberUser newUser = newUserRequest.toUser();
@@ -46,9 +42,7 @@ public class UserService implements UserDetailsService {
         if (userRepository.findByUsername(newUser.getUsername()).isPresent()) {
             throw new BadRequestException("This username is already in use: " + newUser.getUsername());
         }
-        if (newUser.isProvider()) {
-            newUser.setAuthorities("ROLE_PROVIDER");
-        }
+        newUser.setAuthorities("ROLE_USER");
         String passwordEncoded = passwordEncoder.encode(newUser.getPassword());
         newUser.setPassword(passwordEncoded);
         return userRepository.save(newUser);
