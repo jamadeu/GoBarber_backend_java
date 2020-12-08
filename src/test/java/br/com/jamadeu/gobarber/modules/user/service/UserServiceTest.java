@@ -191,14 +191,14 @@ class UserServiceTest {
     @Test
     @DisplayName("resetPassword updates user's password when successful")
     void resetPassword_UpdatesUserPassword_WhenSuccessful() {
-        Assertions.assertThatCode(() -> userService.resetPassword(ResetPasswordRequestCreator.createResetPasswordRequest()))
+        Assertions.assertThatCode(() -> userService.resetPassword(ResetPasswordRequestCreator.createUserResetPasswordRequest()))
                 .doesNotThrowAnyException();
     }
 
     @Test
     @DisplayName("resetPassword returns status code 400 bad request when password is wrong")
     void resetPassword_ReturnsStatusCode400BadRequest_WhenPasswordIsWrong() {
-        ResetPasswordRequest resetPasswordRequest = ResetPasswordRequestCreator.createResetPasswordRequest();
+        ResetPasswordRequest resetPasswordRequest = ResetPasswordRequestCreator.createUserResetPasswordRequest();
         resetPasswordRequest.setOldPassword("wrong password");
 
         Assertions.assertThatExceptionOfType(BadRequestException.class)

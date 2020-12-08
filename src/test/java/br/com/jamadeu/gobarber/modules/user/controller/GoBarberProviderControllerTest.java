@@ -105,9 +105,9 @@ class GoBarberProviderControllerTest {
     @Test
     @DisplayName("resetPassword updates provider password when successful")
     void resetPassword_UpdatesProviderPassword_WhenSuccessful() {
-        Assertions.assertThatCode(() -> providerController.resetPassword(ResetPasswordRequestCreator.createResetPasswordRequest()))
+        Assertions.assertThatCode(() -> providerController.resetPassword(ResetPasswordRequestCreator.createProviderResetPasswordRequest()))
                 .doesNotThrowAnyException();
-        ResponseEntity<Void> responseEntity = providerController.resetPassword(ResetPasswordRequestCreator.createResetPasswordRequest());
+        ResponseEntity<Void> responseEntity = providerController.resetPassword(ResetPasswordRequestCreator.createProviderResetPasswordRequest());
 
         Assertions.assertThat(responseEntity).isNotNull();
         Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);

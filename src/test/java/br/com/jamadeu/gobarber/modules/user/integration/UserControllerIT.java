@@ -1,11 +1,11 @@
 package br.com.jamadeu.gobarber.modules.user.integration;
 
-import br.com.jamadeu.gobarber.shared.wrapper.PageableResponse;
 import br.com.jamadeu.gobarber.modules.user.domain.GoBarberUser;
 import br.com.jamadeu.gobarber.modules.user.repository.UserRepository;
 import br.com.jamadeu.gobarber.modules.user.requests.NewUserRequest;
 import br.com.jamadeu.gobarber.modules.user.requests.ReplaceUserRequest;
 import br.com.jamadeu.gobarber.modules.user.requests.ResetPasswordRequest;
+import br.com.jamadeu.gobarber.shared.wrapper.PageableResponse;
 import br.com.jamadeu.gobarber.util.NewUserRequestCreator;
 import br.com.jamadeu.gobarber.util.ReplaceUserRequestCreator;
 import br.com.jamadeu.gobarber.util.ResetPasswordRequestCreator;
@@ -35,12 +35,7 @@ import org.springframework.test.annotation.DirtiesContext;
 @AutoConfigureTestDatabase
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @Log4j2
-class GoBarberUserControllerIT {
-    @Autowired
-    private TestRestTemplate testRestTemplate;
-    @Autowired
-    private UserRepository userRepository;
-
+class UserControllerIT {
     public static final GoBarberUser USER = GoBarberUser.builder()
             .name("admin")
             .password("{bcrypt}$2a$10$w80PLxkKSJMlJR2//Y7zcekwzFK1k2tIuo/hf.7toZ5y2rEu0302i")
@@ -48,18 +43,10 @@ class GoBarberUserControllerIT {
             .email("admin@gobarber.com")
             .authorities("ROLE_USER")
             .build();
-
-    @TestConfiguration
-    @Lazy
-    static class config {
-        @Bean
-        public TestRestTemplate testRestTemplate(@Value("${local.server.port}") int port) {
-            RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder()
-                    .rootUri("http://localhost:" + port)
-                    .basicAuthentication("admin", "admin");
-            return new TestRestTemplate(restTemplateBuilder);
-        }
-    }
+    @Autowired
+    private TestRestTemplate testRestTemplate;
+    @Autowired
+    private UserRepository userRepository;
 
     @Test
     @DisplayName("listAll returns list of users inside page object when successful")
@@ -250,9 +237,9 @@ class GoBarberUserControllerIT {
     void resetPassword_UpdatesUserPassword_WhenSuccessful() {
         userRepository.save(UserCreator.createUserToBeSavedWithPasswordEncoded());
         userRepository.save(USER);
-        ResetPasswordRequest resetPasswordRequest = ResetPasswordRequestCreator.createResetPasswordRequest();
+        ResetPasswordRequest resetPasswordRequest = ResetPasswordRequestCreator.createUserResetPasswordRequest();
         ResponseEntity<Void> responseEntity = testRestTemplate.exchange(
-                "/users/reset-password?_method=patch",
+                "/users/reset-password",
                 HttpMethod.PUT,
                 new HttpEntity<>(resetPasswordRequest),
                 Void.class
@@ -265,7 +252,7 @@ class GoBarberUserControllerIT {
     @Test
     @DisplayName("resetPassword returns status code 400 BadRequest when user is not found")
     void resetPassword_ReturnsStatusCode400_WhenUserIsNotFound() {
-        ResetPasswordRequest userNotExists = ResetPasswordRequestCreator.createResetPasswordRequest();
+        ResetPasswordRequest userNotExists = ResetPasswordRequestCreator.createUserResetPasswordRequest();
         userNotExists.setUsername("userNotExists");
         ResponseEntity<Void> responseEntity = testRestTemplate.exchange(
                 "/users",
@@ -276,6 +263,18 @@ class GoBarberUserControllerIT {
 
         Assertions.assertThat(responseEntity).isNotNull();
         Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @TestConfiguration
+    @Lazy
+    static class config {
+        @Bean
+        public TestRestTemplate testRestTemplate(@Value("${local.server.port}") int port) {
+            RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder()
+                    .rootUri("http://localhost:" + port)
+                    .basicAuthentication("admin", "admin");
+            return new TestRestTemplate(restTemplateBuilder);
+        }
     }
 
 }

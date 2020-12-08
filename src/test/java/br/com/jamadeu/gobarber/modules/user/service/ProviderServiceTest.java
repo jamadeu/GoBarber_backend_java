@@ -1,10 +1,10 @@
 package br.com.jamadeu.gobarber.modules.user.service;
 
-import br.com.jamadeu.gobarber.shared.exception.BadRequestException;
 import br.com.jamadeu.gobarber.modules.user.domain.GoBarberProvider;
 import br.com.jamadeu.gobarber.modules.user.repository.ProviderRepository;
 import br.com.jamadeu.gobarber.modules.user.requests.ReplaceProviderRequest;
 import br.com.jamadeu.gobarber.modules.user.requests.ResetPasswordRequest;
+import br.com.jamadeu.gobarber.shared.exception.BadRequestException;
 import br.com.jamadeu.gobarber.util.NewProviderRequestCreator;
 import br.com.jamadeu.gobarber.util.ReplaceProviderRequestCreator;
 import br.com.jamadeu.gobarber.util.ResetPasswordRequestCreator;
@@ -191,14 +191,14 @@ class ProviderServiceTest {
     @Test
     @DisplayName("resetPassword updates provider's password when successful")
     void resetPassword_UpdatesProviderPassword_WhenSuccessful() {
-        Assertions.assertThatCode(() -> providerService.resetPassword(ResetPasswordRequestCreator.createResetPasswordRequest()))
+        Assertions.assertThatCode(() -> providerService.resetPassword(ResetPasswordRequestCreator.createProviderResetPasswordRequest()))
                 .doesNotThrowAnyException();
     }
 
     @Test
     @DisplayName("resetPassword returns status code 400 bad request when password is wrong")
     void resetPassword_ReturnsStatusCode400BadRequest_WhenPasswordIsWrong() {
-        ResetPasswordRequest resetPasswordRequest = ResetPasswordRequestCreator.createResetPasswordRequest();
+        ResetPasswordRequest resetPasswordRequest = ResetPasswordRequestCreator.createProviderResetPasswordRequest();
         resetPasswordRequest.setOldPassword("wrong password");
 
         Assertions.assertThatExceptionOfType(BadRequestException.class)

@@ -79,7 +79,7 @@ public class ProviderService implements UserDetailsService {
 
     public void resetPassword(ResetPasswordRequest resetPasswordRequest) {
         GoBarberProvider provider = providerRepository.findByUsername(resetPasswordRequest.getUsername())
-                .orElseThrow(() -> new BadRequestException("User not found"));
+                .orElseThrow(() -> new BadRequestException("Provider not found"));
         if (!passwordEncoder.matches(resetPasswordRequest.getOldPassword(), provider.getPassword())) {
             throw new BadRequestException("Old password is wrong");
         }
