@@ -1,6 +1,6 @@
 package br.com.jamadeu.gobarber.shared.config;
 
-import br.com.jamadeu.gobarber.user.service.UserService;
+import br.com.jamadeu.gobarber.modules.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;

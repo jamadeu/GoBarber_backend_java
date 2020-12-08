@@ -1,7 +1,7 @@
 package br.com.jamadeu.gobarber.util;
 
-import br.com.jamadeu.gobarber.user.domain.GoBarberUser;
-import br.com.jamadeu.gobarber.user.requests.NewUserRequest;
+import br.com.jamadeu.gobarber.modules.user.domain.GoBarberUser;
+import br.com.jamadeu.gobarber.modules.user.requests.NewUserRequest;
 
 public class NewUserRequestCreator {
     public static NewUserRequest createNewUserRequest() {

@@ -1,9 +1,9 @@
 package br.com.jamadeu.gobarber.shared.storage.controller;
 
 import br.com.jamadeu.gobarber.shared.storage.service.AvatarService;
-import br.com.jamadeu.gobarber.user.domain.GoBarberUser;
-import br.com.jamadeu.gobarber.user.requests.ReplaceUserRequest;
-import br.com.jamadeu.gobarber.user.service.UserService;
+import br.com.jamadeu.gobarber.modules.user.domain.GoBarberUser;
+import br.com.jamadeu.gobarber.modules.user.requests.ReplaceUserRequest;
+import br.com.jamadeu.gobarber.modules.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

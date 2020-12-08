@@ -1,7 +1,7 @@
 package br.com.jamadeu.gobarber.util;
 
-import br.com.jamadeu.gobarber.user.domain.GoBarberProvider;
-import br.com.jamadeu.gobarber.user.requests.ReplaceProviderRequest;
+import br.com.jamadeu.gobarber.modules.user.domain.GoBarberProvider;
+import br.com.jamadeu.gobarber.modules.user.requests.ReplaceProviderRequest;
 
 public class ReplaceProviderRequestCreator {
     public static ReplaceProviderRequest createReplaceProviderRequest() {

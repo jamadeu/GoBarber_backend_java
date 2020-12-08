@@ -1,8 +1,8 @@
 package br.com.jamadeu.gobarber.shared.email.service;
 
-import br.com.jamadeu.gobarber.user.domain.GoBarberUser;
+import br.com.jamadeu.gobarber.modules.user.domain.GoBarberUser;
 import br.com.jamadeu.gobarber.shared.exception.BadRequestException;
-import br.com.jamadeu.gobarber.user.repository.UserRepository;
+import br.com.jamadeu.gobarber.modules.user.repository.UserRepository;
 import br.com.jamadeu.gobarber.shared.email.requests.SendForgotPasswordEmailRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
