@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @DataJpaTest
 @DisplayName("Tests for UserRepository")
-class GoBarberProviderRepositoryTest {
+class ProviderRepositoryTest {
     @Autowired
     private ProviderRepository providerRepository;
 
@@ -87,11 +87,12 @@ class GoBarberProviderRepositoryTest {
         GoBarberProvider provider = GoBarberProvider.builder()
                 .email("email@gobarber.com")
                 .password("password")
+                .username("username")
                 .build();
 
         Assertions.assertThatExceptionOfType(ConstraintViolationException.class)
                 .isThrownBy(() -> providerRepository.save(provider))
-                .withMessageContaining("The provider name can not be empty");
+                .withMessageContaining("The user name can not be empty");
     }
 
     @Test
@@ -113,12 +114,13 @@ class GoBarberProviderRepositoryTest {
         GoBarberProvider provider = GoBarberProvider.builder()
                 .name("Provider")
                 .email("emailNotFormatted")
+                .username("username")
                 .password("password")
                 .build();
 
         Assertions.assertThatExceptionOfType(ConstraintViolationException.class)
                 .isThrownBy(() -> providerRepository.save(provider))
-                .withMessageContaining("The provider email must be in a valid email format");
+                .withMessageContaining("The user email must be in a valid email format");
     }
 
     @Test
@@ -126,12 +128,13 @@ class GoBarberProviderRepositoryTest {
     void save_ThrowsConstraintViolationException_WhenPasswordIsEmpty() {
         GoBarberProvider provider = GoBarberProvider.builder()
                 .name("Provider")
+                .username("username")
                 .email("email@gobarber.com")
                 .build();
 
         Assertions.assertThatExceptionOfType(ConstraintViolationException.class)
                 .isThrownBy(() -> providerRepository.save(provider))
-                .withMessageContaining("The provider password can not be empty");
+                .withMessageContaining("The user password can not be empty");
     }
 
     @Test
@@ -139,13 +142,28 @@ class GoBarberProviderRepositoryTest {
     void save_ThrowsConstraintViolationException_WhenPasswordIsLessThan6Characters() {
         GoBarberProvider provider = GoBarberProvider.builder()
                 .name("Provider")
+                .username("username")
                 .email("email@gobarber.com")
                 .password("123")
                 .build();
 
         Assertions.assertThatExceptionOfType(ConstraintViolationException.class)
                 .isThrownBy(() -> providerRepository.save(provider))
-                .withMessageContaining("The provider password must be at least 6 characters");
+                .withMessageContaining("The user password must be at least 6 characters");
+    }
+
+    @Test
+    @DisplayName("save throw ConstraintViolationException when username is empty")
+    void save_ThrowsConstraintViolationException_WhenUsernameIsEmpty() {
+        GoBarberProvider provider = GoBarberProvider.builder()
+                .name("Provider")
+                .email("email@gobarber.com")
+                .password("123123")
+                .build();
+
+        Assertions.assertThatExceptionOfType(ConstraintViolationException.class)
+                .isThrownBy(() -> providerRepository.save(provider))
+                .withMessageContaining("The user username can not be empty");
     }
 
     @Test

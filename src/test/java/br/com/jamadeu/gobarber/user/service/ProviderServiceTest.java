@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Optional;
 
 @ExtendWith(SpringExtension.class)
-class GoBarberProviderServiceTest {
+class ProviderServiceTest {
     @InjectMocks
     private ProviderService providerService;
 
@@ -95,7 +95,7 @@ class GoBarberProviderServiceTest {
 
         Assertions.assertThat(provider)
                 .isNotNull()
-                .isEqualTo(UserCreator.createValidUser());
+                .isEqualTo(UserCreator.createValidProvider());
     }
 
     @Test

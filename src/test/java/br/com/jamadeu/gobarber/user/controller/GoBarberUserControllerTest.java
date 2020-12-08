@@ -37,13 +37,10 @@ class GoBarberUserControllerTest {
     @BeforeEach
     void setup() {
         PageImpl<GoBarberUser> userPage = new PageImpl<>(List.of(UserCreator.createValidUser()));
-        PageImpl<GoBarberUser> providerPage = new PageImpl<>(List.of(UserCreator.createValidProvider()));
         BDDMockito.when(userServiceMock.listAll(ArgumentMatchers.any(PageRequest.class)))
                 .thenReturn(userPage);
         BDDMockito.when(userServiceMock.findByIdOrThrowBadRequestException(ArgumentMatchers.anyLong()))
                 .thenReturn(UserCreator.createValidUser());
-        BDDMockito.when(userServiceMock.listAllProviders(ArgumentMatchers.any(PageRequest.class)))
-                .thenReturn(providerPage);
         BDDMockito.when(userServiceMock.save(ArgumentMatchers.any(NewUserRequest.class)))
                 .thenReturn(UserCreator.createValidUser());
         BDDMockito.doNothing().when(userServiceMock).replace(ArgumentMatchers.any(ReplaceUserRequest.class));
@@ -72,19 +69,6 @@ class GoBarberUserControllerTest {
         Assertions.assertThat(user).isNotNull();
         Assertions.assertThat(user.getId()).isNotNull().isEqualTo(1);
         Assertions.assertThat(user.getName()).isEqualTo(expectedName);
-    }
-
-    @Test
-    @DisplayName("listAllProvider returns list of users who isProvider is true inside page object when successful")
-    void listAllProviders_ReturnsListOfUsersWhoIsProviderIsTrueInsidePageObject_WhenSuccessful() {
-        String expectedName = UserCreator.createValidProvider().getName();
-        Page<GoBarberUser> providerPage = userController.listAllProviders(PageRequest.of(1, 1)).getBody();
-
-        Assertions.assertThat(providerPage).isNotNull();
-        Assertions.assertThat(providerPage.toList())
-                .isNotEmpty()
-                .hasSize(1);
-        Assertions.assertThat(providerPage.toList().get(0).getName()).isEqualTo(expectedName);
     }
 
     @Test

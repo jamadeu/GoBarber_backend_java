@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Optional;
 
 @ExtendWith(SpringExtension.class)
-class GoBarberUserServiceTest {
+class UserServiceTest {
     @InjectMocks
     private UserService userService;
 

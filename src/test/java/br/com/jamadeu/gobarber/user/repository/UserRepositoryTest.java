@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @DataJpaTest
 @DisplayName("Tests for UserRepository")
-class GoBarberUserRepositoryTest {
+class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 

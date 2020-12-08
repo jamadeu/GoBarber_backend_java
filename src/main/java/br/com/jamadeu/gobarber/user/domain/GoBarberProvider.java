@@ -20,15 +20,15 @@ public class GoBarberProvider extends AbstractUser {
     @Builder
     public GoBarberProvider(
             Long id,
-            @NotEmpty(message = "The user name can not be empty")
+            @NotEmpty(message = "The provider name can not be empty")
                     String name,
-            @NotEmpty(message = "The user username can not be empty")
+            @NotEmpty(message = "The provider username can not be empty")
                     String username,
-            @NotEmpty(message = "The user email can not be empty")
-            @Email(message = "The user email must be in a valid email format")
+            @NotEmpty(message = "The provider email can not be empty")
+            @Email(message = "The provider email must be in a valid email format")
                     String email,
-            @NotEmpty(message = "The user password can not be empty")
-            @Size(min = 6, message = "The user password must be at least 6 characters")
+            @NotEmpty(message = "The provider password can not be empty")
+            @Size(min = 6, message = "The provider password must be at least 6 characters")
                     String password,
             String avatar,
             String authorities) {

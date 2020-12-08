@@ -266,7 +266,6 @@ class GoBarberUserControllerIT {
     @DisplayName("resetPassword returns status code 400 BadRequest when user is not found")
     void resetPassword_ReturnsStatusCode400_WhenUserIsNotFound() {
         ResetPasswordRequest userNotExists = ResetPasswordRequestCreator.createResetPasswordRequest();
-        Long id = userRepository.save(USER).getId();
         userNotExists.setUsername("userNotExists");
         ResponseEntity<Void> responseEntity = testRestTemplate.exchange(
                 "/users",
