@@ -1,6 +1,5 @@
 package br.com.jamadeu.gobarber.modules.user.requests;
 
-import br.com.jamadeu.gobarber.modules.user.domain.GoBarberUser;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -44,14 +43,4 @@ public class NewUserRequest {
             nullable = true
     )
     private String avatar;
-
-    public GoBarberUser toUser() {
-        return GoBarberUser.builder()
-                .name(name)
-                .username(username)
-                .email(email)
-                .password(password)
-                .avatar(avatar)
-                .build();
-    }
 }

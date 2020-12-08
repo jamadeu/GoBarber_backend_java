@@ -1,11 +1,12 @@
 package br.com.jamadeu.gobarber.modules.user.service;
 
-import br.com.jamadeu.gobarber.shared.exception.BadRequestException;
 import br.com.jamadeu.gobarber.modules.user.domain.GoBarberUser;
+import br.com.jamadeu.gobarber.modules.user.mapper.UserMapper;
 import br.com.jamadeu.gobarber.modules.user.repository.UserRepository;
 import br.com.jamadeu.gobarber.modules.user.requests.NewUserRequest;
 import br.com.jamadeu.gobarber.modules.user.requests.ReplaceUserRequest;
 import br.com.jamadeu.gobarber.modules.user.requests.ResetPasswordRequest;
+import br.com.jamadeu.gobarber.shared.exception.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,7 +36,7 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public GoBarberUser save(NewUserRequest newUserRequest) {
-        GoBarberUser newUser = newUserRequest.toUser();
+        GoBarberUser newUser = UserMapper.INSTANCE.toUser(newUserRequest);
         if (userRepository.findByEmail(newUser.getEmail()).isPresent()) {
             throw new BadRequestException("This email is already in use: " + newUser.getEmail());
         }
@@ -50,7 +51,7 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public void replace(ReplaceUserRequest replaceUserRequest) {
-        GoBarberUser userToReplace = replaceUserRequest.toUser();
+        GoBarberUser userToReplace = UserMapper.INSTANCE.toUser(replaceUserRequest);
         GoBarberUser savedUser = userRepository.findById(userToReplace.getId())
                 .orElseThrow(() -> new BadRequestException("User not found"));
         if (!userToReplace.getEmail().equals(savedUser.getEmail()) &&

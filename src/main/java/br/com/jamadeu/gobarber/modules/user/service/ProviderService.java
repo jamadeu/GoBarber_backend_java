@@ -1,11 +1,12 @@
 package br.com.jamadeu.gobarber.modules.user.service;
 
-import br.com.jamadeu.gobarber.shared.exception.BadRequestException;
 import br.com.jamadeu.gobarber.modules.user.domain.GoBarberProvider;
+import br.com.jamadeu.gobarber.modules.user.mapper.UserMapper;
 import br.com.jamadeu.gobarber.modules.user.repository.ProviderRepository;
 import br.com.jamadeu.gobarber.modules.user.requests.NewProviderRequest;
 import br.com.jamadeu.gobarber.modules.user.requests.ReplaceProviderRequest;
 import br.com.jamadeu.gobarber.modules.user.requests.ResetPasswordRequest;
+import br.com.jamadeu.gobarber.shared.exception.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,7 +36,7 @@ public class ProviderService implements UserDetailsService {
 
     @Transactional
     public GoBarberProvider save(NewProviderRequest newProviderRequest) {
-        GoBarberProvider newProvider = newProviderRequest.toUser();
+        GoBarberProvider newProvider = UserMapper.INSTANCE.toProvider(newProviderRequest);
         if (providerRepository.findByEmail(newProvider.getEmail()).isPresent()) {
             throw new BadRequestException("This email is already in use: " + newProvider.getEmail());
         }
@@ -50,7 +51,7 @@ public class ProviderService implements UserDetailsService {
 
     @Transactional
     public void replace(ReplaceProviderRequest replaceProviderRequest) {
-        GoBarberProvider providerToReplace = replaceProviderRequest.toUser();
+        GoBarberProvider providerToReplace = UserMapper.INSTANCE.toProvider(replaceProviderRequest);
         GoBarberProvider savedProvider = providerRepository.findById(providerToReplace.getId())
                 .orElseThrow(() -> new BadRequestException("Provider not found"));
         if (!providerToReplace.getEmail().equals(savedProvider.getEmail()) &&
