@@ -1,8 +1,8 @@
 package br.com.jamadeu.gobarber.shared.storage.controller;
 
+import br.com.jamadeu.gobarber.shared.storage.service.AvatarService;
 import br.com.jamadeu.gobarber.user.domain.GoBarberUser;
 import br.com.jamadeu.gobarber.user.requests.ReplaceUserRequest;
-import br.com.jamadeu.gobarber.shared.storage.service.AvatarService;
 import br.com.jamadeu.gobarber.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -54,7 +54,6 @@ public class AvatarController {
                 .name(user.getName())
                 .email(user.getEmail())
                 .password(user.getPassword())
-                .isProvider(user.isProvider())
                 .avatar(url)
                 .build();
         userService.replace(userUpdated);

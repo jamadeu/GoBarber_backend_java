@@ -7,8 +7,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 
 import javax.validation.ConstraintViolationException;
 import java.util.Optional;
@@ -58,22 +56,6 @@ class GoBarberUserRepositoryTest {
         Optional<GoBarberUser> userOptional = userRepository.findById(userSaved.getId());
 
         Assertions.assertThat(userOptional).isEmpty();
-    }
-
-    @Test
-    @DisplayName("findByIsProviderTrue returns list of user who isProvider is true inside page object when successful")
-    void findByIsProviderTrue_ReturnsListOfUserWhoIsProviderIsTrueInsidePageObject_WhenSuccessful() {
-        GoBarberUser providerToBeSaved = UserCreator.createProviderToBeSaved();
-        GoBarberUser userToBeSaved = UserCreator.createUserToBeSaved();
-        userRepository.save(providerToBeSaved);
-        userRepository.save(userToBeSaved);
-        Page<GoBarberUser> userPage = userRepository.findByIsProviderTrue(PageRequest.of(0, 1));
-
-        Assertions.assertThat(userPage).isNotNull();
-        Assertions.assertThat(userPage.toList())
-                .isNotEmpty()
-                .hasSize(1);
-        Assertions.assertThat(userPage.toList().get(0).getName()).isEqualTo(providerToBeSaved.getName());
     }
 
     @Test
@@ -177,7 +159,6 @@ class GoBarberUserRepositoryTest {
         Assertions.assertThat(userSaved.getName()).isEqualTo(userToBeSaved.getName());
         Assertions.assertThat(userSaved.getEmail()).isEqualTo(userToBeSaved.getEmail());
         Assertions.assertThat(userSaved.getPassword()).isEqualTo(userToBeSaved.getPassword());
-        Assertions.assertThat(userSaved.isProvider()).isFalse();
     }
 
     @Test

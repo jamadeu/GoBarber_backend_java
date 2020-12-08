@@ -2,8 +2,10 @@ package br.com.jamadeu.gobarber.user.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
-import lombok.experimental.SuperBuilder;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,7 +20,6 @@ import java.util.List;
 @MappedSuperclass
 @ToString(exclude = {"authorities"})
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public abstract class AbstractUser implements UserDetails {

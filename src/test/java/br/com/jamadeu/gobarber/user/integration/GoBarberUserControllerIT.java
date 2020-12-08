@@ -1,5 +1,6 @@
 package br.com.jamadeu.gobarber.user.integration;
 
+import br.com.jamadeu.gobarber.shared.wrapper.PageableResponse;
 import br.com.jamadeu.gobarber.user.domain.GoBarberUser;
 import br.com.jamadeu.gobarber.user.repository.UserRepository;
 import br.com.jamadeu.gobarber.user.requests.NewUserRequest;
@@ -9,7 +10,6 @@ import br.com.jamadeu.gobarber.util.NewUserRequestCreator;
 import br.com.jamadeu.gobarber.util.ReplaceUserRequestCreator;
 import br.com.jamadeu.gobarber.util.ResetPasswordRequestCreator;
 import br.com.jamadeu.gobarber.util.UserCreator;
-import br.com.jamadeu.gobarber.shared.wrapper.PageableResponse;
 import lombok.extern.log4j.Log4j2;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -46,7 +46,6 @@ class GoBarberUserControllerIT {
             .password("{bcrypt}$2a$10$w80PLxkKSJMlJR2//Y7zcekwzFK1k2tIuo/hf.7toZ5y2rEu0302i")
             .username("admin")
             .email("admin@gobarber.com")
-            .isProvider(false)
             .authorities("ROLE_USER")
             .build();
 
@@ -115,28 +114,6 @@ class GoBarberUserControllerIT {
     }
 
     @Test
-    @DisplayName("listAllProvider returns list of users who isProvider is true inside page object when successful")
-    void listAllProviders_ReturnsListOfUsersWhoIsProviderIsTrueInsidePageObject_WhenSuccessful() {
-        userRepository.save(UserCreator.createUserToBeSaved());
-        userRepository.save(USER);
-        GoBarberUser savedProvider = userRepository.save(UserCreator.createProviderToBeSaved());
-        String expectedName = savedProvider.getName();
-        PageableResponse<GoBarberUser> providerPage = testRestTemplate.exchange(
-                "/users/providers-all",
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<PageableResponse<GoBarberUser>>() {
-                }
-        ).getBody();
-
-        Assertions.assertThat(providerPage).isNotNull();
-        Assertions.assertThat(providerPage.toList())
-                .isNotEmpty()
-                .hasSize(1);
-        Assertions.assertThat(providerPage.toList().get(0).getName()).isEqualTo(expectedName);
-    }
-
-    @Test
     @DisplayName("save returns user when successful")
     void save_ReturnsUser_WhenSuccessful() {
         userRepository.save(USER);
@@ -151,7 +128,6 @@ class GoBarberUserControllerIT {
         Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         Assertions.assertThat(responseEntity.getBody()).isNotNull();
         Assertions.assertThat(responseEntity.getBody().getId()).isNotNull();
-        Assertions.assertThat(responseEntity.getBody().isProvider()).isFalse();
     }
 
     @Test

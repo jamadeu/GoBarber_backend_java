@@ -1,7 +1,7 @@
 package br.com.jamadeu.gobarber.user.service;
 
-import br.com.jamadeu.gobarber.user.domain.GoBarberUser;
 import br.com.jamadeu.gobarber.shared.exception.BadRequestException;
+import br.com.jamadeu.gobarber.user.domain.GoBarberUser;
 import br.com.jamadeu.gobarber.user.repository.UserRepository;
 import br.com.jamadeu.gobarber.user.requests.ReplaceUserRequest;
 import br.com.jamadeu.gobarber.user.requests.ResetPasswordRequest;
@@ -39,13 +39,10 @@ class GoBarberUserServiceTest {
     @BeforeEach
     void setup() {
         PageImpl<GoBarberUser> userPage = new PageImpl<>(List.of(UserCreator.createValidUser()));
-        PageImpl<GoBarberUser> providerPage = new PageImpl<>(List.of(UserCreator.createValidProvider()));
         BDDMockito.when(userRepositoryMock.findAll(ArgumentMatchers.any(PageRequest.class)))
                 .thenReturn(userPage);
         BDDMockito.when(userRepositoryMock.findById(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.of(UserCreator.createValidUser()));
-        BDDMockito.when(userRepositoryMock.findByIsProviderTrue(ArgumentMatchers.any(PageRequest.class)))
-                .thenReturn(providerPage);
         BDDMockito.when(userRepositoryMock.save(ArgumentMatchers.any(GoBarberUser.class)))
                 .thenReturn(UserCreator.createValidUser());
         BDDMockito.doNothing().when(userRepositoryMock).delete(ArgumentMatchers.any(GoBarberUser.class));
@@ -90,19 +87,6 @@ class GoBarberUserServiceTest {
     }
 
     @Test
-    @DisplayName("listAllProviders returns list of users who isProvider is true inside page object when successful")
-    void listAllProviders_ReturnsListOfUsersWhoIsProviderIsTrueInsidePageObject_WhenSuccessful() {
-        String expectedName = UserCreator.createValidProvider().getName();
-        Page<GoBarberUser> providerPage = userService.listAllProviders(PageRequest.of(1, 1));
-
-        Assertions.assertThat(providerPage).isNotNull();
-        Assertions.assertThat(providerPage.toList())
-                .isNotEmpty()
-                .hasSize(1);
-        Assertions.assertThat(providerPage.toList().get(0).getName()).isEqualTo(expectedName);
-    }
-
-    @Test
     @DisplayName("save returns user when successful")
     void save_ReturnsUser_WhenSuccessful() {
         BDDMockito.when(userRepositoryMock.findByUsername(ArgumentMatchers.anyString())).
@@ -112,20 +96,6 @@ class GoBarberUserServiceTest {
         Assertions.assertThat(user)
                 .isNotNull()
                 .isEqualTo(UserCreator.createValidUser());
-    }
-
-    @Test
-    @DisplayName("save returns provider when successful")
-    void save_ReturnsProvider_WhenSuccessful() {
-        BDDMockito.when(userRepositoryMock.findByUsername(ArgumentMatchers.anyString())).
-                thenReturn(Optional.empty());
-        BDDMockito.when(userRepositoryMock.save(ArgumentMatchers.any(GoBarberUser.class)))
-                .thenReturn(UserCreator.createValidProvider());
-        GoBarberUser provider = userService.save(NewUserRequestCreator.createNewProviderRequest());
-
-        Assertions.assertThat(provider)
-                .isNotNull()
-                .isEqualTo(UserCreator.createValidProvider());
     }
 
     @Test
