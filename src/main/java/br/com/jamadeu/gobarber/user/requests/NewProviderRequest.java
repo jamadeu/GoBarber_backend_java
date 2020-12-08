@@ -1,6 +1,6 @@
 package br.com.jamadeu.gobarber.user.requests;
 
-import br.com.jamadeu.gobarber.user.domain.GoBarberUser;
+import br.com.jamadeu.gobarber.user.domain.GoBarberProvider;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +15,7 @@ import javax.validation.constraints.Size;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class NewUserRequest {
+public class NewProviderRequest {
     @NotEmpty(message = "The user name can not be empty")
     @Schema(description = "This is the user's name", example = "Name", required = true)
     private String name;
@@ -39,14 +39,15 @@ public class NewUserRequest {
     @Schema(description = "This is a user password unencrypted", required = true)
     private String password;
 
+
     @Schema(description = "This is the user's avatar",
             defaultValue = "null",
             nullable = true
     )
     private String avatar;
 
-    public GoBarberUser toUser() {
-        return GoBarberUser.builder()
+    public GoBarberProvider toUser() {
+        return GoBarberProvider.builder()
                 .name(name)
                 .username(username)
                 .email(email)

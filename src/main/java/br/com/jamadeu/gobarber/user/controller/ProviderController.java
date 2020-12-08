@@ -1,7 +1,8 @@
 package br.com.jamadeu.gobarber.user.controller;
 
 import br.com.jamadeu.gobarber.user.domain.GoBarberProvider;
-import br.com.jamadeu.gobarber.user.domain.GoBarberUser;
+import br.com.jamadeu.gobarber.user.requests.NewProviderRequest;
+import br.com.jamadeu.gobarber.user.requests.ReplaceProviderRequest;
 import br.com.jamadeu.gobarber.user.requests.ResetPasswordRequest;
 import br.com.jamadeu.gobarber.user.service.ProviderService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -58,7 +59,7 @@ public class ProviderController {
             @ApiResponse(responseCode = "204", description = "Successful operation"),
             @ApiResponse(responseCode = "400", description = "When there is an error with some mandatory field")
     })
-    public ResponseEntity<GoBarberUser> save(@RequestBody @Valid NewProviderRequest newProviderRequest) {
+    public ResponseEntity<GoBarberProvider> save(@RequestBody @Valid NewProviderRequest newProviderRequest) {
         return new ResponseEntity<>(providerService.save(newProviderRequest), HttpStatus.CREATED);
     }
 
@@ -70,7 +71,7 @@ public class ProviderController {
             @ApiResponse(responseCode = "204", description = "Successful operation"),
             @ApiResponse(responseCode = "400", description = "When user not found")
     })
-    public ResponseEntity<GoBarberUser> replace(@RequestBody @Valid ReplaceProviderRequest replaceProviderRequest) {
+    public ResponseEntity<GoBarberProvider> replace(@RequestBody @Valid ReplaceProviderRequest replaceProviderRequest) {
         providerService.replace(replaceProviderRequest);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
