@@ -1,7 +1,6 @@
 package br.com.jamadeu.gobarber.modules.appointment.requests;
 
 
-import br.com.jamadeu.gobarber.modules.appointment.domain.Appointment;
 import br.com.jamadeu.gobarber.modules.user.domain.GoBarberProvider;
 import br.com.jamadeu.gobarber.modules.user.domain.GoBarberUser;
 import lombok.AllArgsConstructor;
@@ -27,12 +26,4 @@ public class NewAppointmentRequest {
     @NotNull(message = "Appointment date can not be null")
     @Future(message = "Appointment date can not be past")
     private LocalDateTime date;
-
-    public Appointment toAppointment() {
-        return Appointment.builder()
-                .user(user)
-                .provider(provider)
-                .date(date)
-                .build();
-    }
 }

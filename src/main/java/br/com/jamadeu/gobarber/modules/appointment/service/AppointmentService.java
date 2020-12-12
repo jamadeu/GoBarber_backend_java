@@ -1,6 +1,7 @@
 package br.com.jamadeu.gobarber.modules.appointment.service;
 
 import br.com.jamadeu.gobarber.modules.appointment.domain.Appointment;
+import br.com.jamadeu.gobarber.modules.appointment.mapper.AppointmentMapper;
 import br.com.jamadeu.gobarber.modules.appointment.repository.AppointmentRepository;
 import br.com.jamadeu.gobarber.modules.appointment.requests.NewAppointmentRequest;
 import br.com.jamadeu.gobarber.modules.user.domain.GoBarberProvider;
@@ -45,6 +46,6 @@ public class AppointmentService {
         if (providerRepository.findById(newAppointmentRequest.getProvider().getId()).isEmpty()) {
             throw new BadRequestException("Provider not found");
         }
-        return appointmentRepository.save(newAppointmentRequest.toAppointment());
+        return appointmentRepository.save(AppointmentMapper.INSTANCE.toAppointment(newAppointmentRequest));
     }
 }
