@@ -1,46 +1,33 @@
 package br.com.jamadeu.gobarber.modules.appointment.domain;
 
+import br.com.jamadeu.gobarber.modules.user.domain.GoBarberProvider;
 import br.com.jamadeu.gobarber.modules.user.domain.GoBarberUser;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotEmpty;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Data
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
-@Table(name = "appointments")
-public class Appointment {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@EqualsAndHashCode(callSuper = false)
+public class Appointment extends AbstractAppointment {
 
-    @NotEmpty(message = "User id can not be empty")
-    @ManyToOne(targetEntity = GoBarberUser.class,
-            cascade = CascadeType.ALL,
-            optional = false
-    )
-    private Long userId;
-
-    @NotEmpty(message = "Provider id can not be empty")
-    @ManyToOne(targetEntity = GoBarberUser.class,
-            cascade = CascadeType.ALL,
-            optional = false
-    )
-    private Long providerId;
-
-    @NotEmpty(message = "Appointment date can not be empty")
-    @Future(message = "Appointment date can not be past")
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(nullable = false)
-    private Date date;
-
-
+    @Builder
+    public Appointment(
+            Long id,
+            @NotEmpty(message = "User id can not be empty")
+                    GoBarberUser user,
+            @NotEmpty(message = "Provider id can not be empty")
+                    GoBarberProvider provider,
+            @NotEmpty(message = "Appointment date can not be empty")
+            @Future(message = "Appointment date can not be past")
+                    LocalDateTime date) {
+        super(id, user, provider, date);
+    }
 }
