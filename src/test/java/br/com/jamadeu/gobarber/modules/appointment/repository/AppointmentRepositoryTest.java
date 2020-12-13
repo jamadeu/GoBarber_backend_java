@@ -5,6 +5,7 @@ import br.com.jamadeu.gobarber.modules.user.domain.GoBarberProvider;
 import br.com.jamadeu.gobarber.modules.user.domain.GoBarberUser;
 import br.com.jamadeu.gobarber.modules.user.repository.ProviderRepository;
 import br.com.jamadeu.gobarber.modules.user.repository.UserRepository;
+import br.com.jamadeu.gobarber.util.AppointmentCreator;
 import br.com.jamadeu.gobarber.util.UserCreator;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,11 +37,7 @@ class AppointmentRepositoryTest {
     @Test
     @DisplayName("save persists appointment when successful")
     void save_PersistsAppointment_WhenSuccessful() {
-        Appointment appointmentToBeSaved = Appointment.builder()
-                .user(user)
-                .provider(provider)
-                .date(LocalDateTime.now())
-                .build();
+        Appointment appointmentToBeSaved = AppointmentCreator.createAppointmentToBeSaved(user, provider);
         Appointment appointmentSaved = appointmentRepository.save(appointmentToBeSaved);
 
         Assertions.assertThat(appointmentSaved).isNotNull();
@@ -48,6 +45,24 @@ class AppointmentRepositoryTest {
         Assertions.assertThat(appointmentSaved.getUser()).isEqualTo(appointmentToBeSaved.getUser());
         Assertions.assertThat(appointmentSaved.getProvider()).isEqualTo(appointmentToBeSaved.getProvider());
         Assertions.assertThat(appointmentSaved.getDate()).isBefore(LocalDateTime.now());
+    }
+
+    @Test
+    @DisplayName("save updates appointment when successful")
+    void save_UpdateAppointment_WhenSuccessful() {
+        Appointment appointmentSaved = appointmentRepository.save(
+                AppointmentCreator.createAppointmentToBeSaved(user, provider)
+        );
+        appointmentSaved.setDate(LocalDateTime.of(2050, 12, 12, 12, 12));
+        Appointment updatedAppointment = appointmentRepository.save(appointmentSaved);
+
+        Assertions.assertThat(updatedAppointment).isNotNull();
+        Assertions.assertThat(updatedAppointment.getId())
+                .isNotNull()
+                .isEqualTo(appointmentSaved.getId());
+        Assertions.assertThat(updatedAppointment.getUser()).isEqualTo(appointmentSaved.getUser());
+        Assertions.assertThat(appointmentSaved.getProvider()).isEqualTo(appointmentSaved.getProvider());
+        Assertions.assertThat(appointmentSaved.getDate()).isAfter(LocalDateTime.now());
     }
 
 }
