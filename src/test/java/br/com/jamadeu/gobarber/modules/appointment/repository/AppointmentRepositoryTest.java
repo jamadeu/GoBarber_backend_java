@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @DataJpaTest
 @DisplayName("Tests for AppointmentRepository")
@@ -63,6 +64,18 @@ class AppointmentRepositoryTest {
         Assertions.assertThat(updatedAppointment.getUser()).isEqualTo(appointmentSaved.getUser());
         Assertions.assertThat(appointmentSaved.getProvider()).isEqualTo(appointmentSaved.getProvider());
         Assertions.assertThat(appointmentSaved.getDate()).isAfter(LocalDateTime.now());
+    }
+
+    @Test
+    @DisplayName("delete deletes appointment when successful")
+    void delete_DeleteAppointment_WhenSuccessful() {
+        Appointment appointmentSaved = appointmentRepository.save(
+                AppointmentCreator.createAppointmentToBeSaved(user, provider)
+        );
+        appointmentRepository.delete(appointmentSaved);
+        Optional<Appointment> appointmentOptional = appointmentRepository.findById(appointmentSaved.getId());
+
+        Assertions.assertThat(appointmentOptional).isEmpty();
     }
 
 }
