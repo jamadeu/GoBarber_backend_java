@@ -127,13 +127,25 @@ class AppointmentRepositoryTest {
     @Test
     @DisplayName("findByUser returns a list of appointments inside a page object when successful")
     void findByUser_ReturnsPageableAppointments_WhenSuccessful() {
-        Page<Appointment> pageUser = appointmentRepository.findByUser(user, PageRequest.of(0, 1));
+        Page<Appointment> pageAppointment = appointmentRepository.findByUser(user, PageRequest.of(0, 1));
 
-        Assertions.assertThat(pageUser)
+        Assertions.assertThat(pageAppointment)
                 .isNotNull()
                 .isNotEmpty()
                 .hasSize(1);
-        Assertions.assertThat(pageUser.toList().get(0)).isEqualTo(appointment);
+        Assertions.assertThat(pageAppointment.toList().get(0)).isEqualTo(appointment);
+    }
+
+    @Test
+    @DisplayName("findByProvider returns a list of appointments inside a page object when successful")
+    void findByProvider_ReturnsPageableAppointments_WhenSuccessful() {
+        Page<Appointment> pageAppointment = appointmentRepository.findByProvider(provider, PageRequest.of(0, 1));
+
+        Assertions.assertThat(pageAppointment)
+                .isNotNull()
+                .isNotEmpty()
+                .hasSize(1);
+        Assertions.assertThat(pageAppointment.toList().get(0)).isEqualTo(appointment);
     }
 
 }
