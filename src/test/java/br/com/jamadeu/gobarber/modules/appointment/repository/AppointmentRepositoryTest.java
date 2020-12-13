@@ -13,6 +13,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
@@ -23,6 +25,7 @@ import java.util.Optional;
 class AppointmentRepositoryTest {
     @Autowired
     private AppointmentRepository appointmentRepository;
+    private Appointment appointment;
     @Autowired
     private UserRepository userRepository;
     private GoBarberUser user;
@@ -34,6 +37,9 @@ class AppointmentRepositoryTest {
     void setup() {
         user = userRepository.save(UserCreator.createUserToBeSavedWithPasswordEncoded());
         provider = providerRepository.save(UserCreator.createProviderToBeSavedWithPasswordEncoded());
+        appointment = appointmentRepository.save(
+                AppointmentCreator.createAppointmentToBeSaved(user, provider)
+        );
     }
 
     @Test
@@ -116,6 +122,18 @@ class AppointmentRepositoryTest {
         Optional<Appointment> appointmentOptional = appointmentRepository.findById(appointmentSaved.getId());
 
         Assertions.assertThat(appointmentOptional).isEmpty();
+    }
+
+    @Test
+    @DisplayName("findByUser returns a list of appointments inside a page object when successful")
+    void findByUser_ReturnsPageableAppointments_WhenSuccessful() {
+        Page<Appointment> pageUser = appointmentRepository.findByUser(user, PageRequest.of(0, 1));
+
+        Assertions.assertThat(pageUser)
+                .isNotNull()
+                .isNotEmpty()
+                .hasSize(1);
+        Assertions.assertThat(pageUser.toList().get(0)).isEqualTo(appointment);
     }
 
 }
