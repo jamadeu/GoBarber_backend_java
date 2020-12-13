@@ -97,29 +97,23 @@ class AppointmentRepositoryTest {
     @Test
     @DisplayName("save updates appointment when successful")
     void save_UpdateAppointment_WhenSuccessful() {
-        Appointment appointmentSaved = appointmentRepository.save(
-                AppointmentCreator.createAppointmentToBeSaved(user, provider)
-        );
-        appointmentSaved.setDate(LocalDateTime.of(2050, 12, 12, 12, 12));
-        Appointment updatedAppointment = appointmentRepository.save(appointmentSaved);
+        appointment.setDate(LocalDateTime.of(2050, 12, 12, 12, 12));
+        Appointment updatedAppointment = appointmentRepository.save(appointment);
 
         Assertions.assertThat(updatedAppointment).isNotNull();
         Assertions.assertThat(updatedAppointment.getId())
                 .isNotNull()
-                .isEqualTo(appointmentSaved.getId());
-        Assertions.assertThat(updatedAppointment.getUser()).isEqualTo(appointmentSaved.getUser());
-        Assertions.assertThat(appointmentSaved.getProvider()).isEqualTo(appointmentSaved.getProvider());
-        Assertions.assertThat(appointmentSaved.getDate()).isAfter(LocalDateTime.now());
+                .isEqualTo(appointment.getId());
+        Assertions.assertThat(updatedAppointment.getUser()).isEqualTo(appointment.getUser());
+        Assertions.assertThat(appointment.getProvider()).isEqualTo(appointment.getProvider());
+        Assertions.assertThat(appointment.getDate()).isAfter(LocalDateTime.now());
     }
 
     @Test
     @DisplayName("delete deletes appointment when successful")
     void delete_DeleteAppointment_WhenSuccessful() {
-        Appointment appointmentSaved = appointmentRepository.save(
-                AppointmentCreator.createAppointmentToBeSaved(user, provider)
-        );
-        appointmentRepository.delete(appointmentSaved);
-        Optional<Appointment> appointmentOptional = appointmentRepository.findById(appointmentSaved.getId());
+        appointmentRepository.delete(appointment);
+        Optional<Appointment> appointmentOptional = appointmentRepository.findById(appointment.getId());
 
         Assertions.assertThat(appointmentOptional).isEmpty();
     }
