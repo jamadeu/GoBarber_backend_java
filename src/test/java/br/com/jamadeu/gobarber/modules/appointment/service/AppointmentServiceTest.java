@@ -4,6 +4,7 @@ import br.com.jamadeu.gobarber.modules.appointment.domain.Appointment;
 import br.com.jamadeu.gobarber.modules.appointment.repository.AppointmentRepository;
 import br.com.jamadeu.gobarber.modules.user.repository.ProviderRepository;
 import br.com.jamadeu.gobarber.modules.user.repository.UserRepository;
+import br.com.jamadeu.gobarber.shared.exception.BadRequestException;
 import br.com.jamadeu.gobarber.util.AppointmentCreator;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,6 +47,16 @@ class AppointmentServiceTest {
         Assertions.assertThat(appointment.getId())
                 .isNotNull()
                 .isEqualTo(expectId);
+    }
+
+    @Test
+    @DisplayName("findByIdOrThrowBadRequestException throws BadRequestException when appointment is not found")
+    void findByIdOrThrowBadRequestException_ThrowsBadRequestException_WhenAppointmentIsNotFound() {
+        BDDMockito.when(appointmentRepositoryMock.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Optional.empty());
+
+        Assertions.assertThatExceptionOfType(BadRequestException.class)
+                .isThrownBy(() -> appointmentService.findByIdOrThrowBadRequestException(1));
     }
 
 
