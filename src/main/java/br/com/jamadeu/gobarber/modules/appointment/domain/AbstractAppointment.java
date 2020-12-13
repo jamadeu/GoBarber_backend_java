@@ -19,17 +19,17 @@ public abstract class AbstractAppointment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message = "User id can not be empty")
+    @NotNull(message = "User can not be empty")
     @ManyToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "user_id", nullable = false)
     private GoBarberUser user;
 
-    @NotNull(message = "Provider id can not be empty")
+    @NotNull(message = "Provider can not be empty")
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "provider_id", nullable = false)
     private GoBarberProvider provider;
 
-    @NotNull(message = "Appointment date can not be empty")
+    @NotNull(message = "Appointment date can not be null")
     @Column(nullable = false)
     private LocalDateTime date;
 }

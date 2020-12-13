@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -46,6 +47,45 @@ class AppointmentRepositoryTest {
         Assertions.assertThat(appointmentSaved.getUser()).isEqualTo(appointmentToBeSaved.getUser());
         Assertions.assertThat(appointmentSaved.getProvider()).isEqualTo(appointmentToBeSaved.getProvider());
         Assertions.assertThat(appointmentSaved.getDate()).isBefore(LocalDateTime.now());
+    }
+
+    @Test
+    @DisplayName("save throw ConstraintViolationException when user is null")
+    void save_ThrowsConstraintViolationException_WhenUserIsNull() {
+        Appointment appointment = Appointment.builder()
+                .provider(provider)
+                .date(LocalDateTime.now())
+                .build();
+
+        Assertions.assertThatExceptionOfType(ConstraintViolationException.class)
+                .isThrownBy(() -> appointmentRepository.save(appointment))
+                .withMessageContaining("User can not be empty");
+    }
+
+    @Test
+    @DisplayName("save throw ConstraintViolationException when provider is null")
+    void save_ThrowsConstraintViolationException_WhenProviderIsNull() {
+        Appointment appointment = Appointment.builder()
+                .user(user)
+                .date(LocalDateTime.now())
+                .build();
+
+        Assertions.assertThatExceptionOfType(ConstraintViolationException.class)
+                .isThrownBy(() -> appointmentRepository.save(appointment))
+                .withMessageContaining("Provider can not be empty");
+    }
+
+    @Test
+    @DisplayName("save throw ConstraintViolationException when date is null")
+    void save_ThrowsConstraintViolationException_WhenDateIsNull() {
+        Appointment appointment = Appointment.builder()
+                .user(user)
+                .provider(provider)
+                .build();
+
+        Assertions.assertThatExceptionOfType(ConstraintViolationException.class)
+                .isThrownBy(() -> appointmentRepository.save(appointment))
+                .withMessageContaining("Appointment date can not be null");
     }
 
     @Test
