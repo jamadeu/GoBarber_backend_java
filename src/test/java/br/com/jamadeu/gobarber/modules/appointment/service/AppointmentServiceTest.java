@@ -2,13 +2,15 @@ package br.com.jamadeu.gobarber.modules.appointment.service;
 
 import br.com.jamadeu.gobarber.modules.appointment.domain.Appointment;
 import br.com.jamadeu.gobarber.modules.appointment.repository.AppointmentRepository;
+import br.com.jamadeu.gobarber.modules.appointment.requests.NewAppointmentRequest;
 import br.com.jamadeu.gobarber.modules.user.domain.GoBarberProvider;
 import br.com.jamadeu.gobarber.modules.user.domain.GoBarberUser;
 import br.com.jamadeu.gobarber.modules.user.repository.ProviderRepository;
 import br.com.jamadeu.gobarber.modules.user.repository.UserRepository;
 import br.com.jamadeu.gobarber.shared.exception.BadRequestException;
-import br.com.jamadeu.gobarber.util.AppointmentCreator;
-import br.com.jamadeu.gobarber.util.UserCreator;
+import br.com.jamadeu.gobarber.util.appointment.AppointmentCreator;
+import br.com.jamadeu.gobarber.util.appointment.NewAppointmentRequestCreator;
+import br.com.jamadeu.gobarber.util.user.UserCreator;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -53,6 +55,8 @@ class AppointmentServiceTest {
         BDDMockito.when(appointmentRepositoryMock.findByProvider(
                 ArgumentMatchers.any(GoBarberProvider.class), ArgumentMatchers.any(PageRequest.class)))
                 .thenReturn(appointmentPage);
+        BDDMockito.when(appointmentRepositoryMock.save(ArgumentMatchers.any(Appointment.class)))
+                .thenReturn(AppointmentCreator.createValidAppointment());
     }
 
     @Test
@@ -124,5 +128,38 @@ class AppointmentServiceTest {
         Assertions.assertThatExceptionOfType(BadRequestException.class)
                 .isThrownBy(() -> appointmentService.findByProviderId(1L));
     }
+
+    @Test
+    @DisplayName("create returns an appointment when successful")
+    void create_ReturnsAppointment_WhenSuccessful() {
+        NewAppointmentRequest newAppointmentRequest = NewAppointmentRequestCreator.createNewAppointmentRequest();
+        Appointment appointment = appointmentService.create(newAppointmentRequest);
+
+        Assertions.assertThat(appointment).isNotNull();
+        Assertions.assertThat(appointment.getId()).isNotNull();
+        Assertions.assertThat(appointment.getUser()).isEqualTo(newAppointmentRequest.getUser());
+        Assertions.assertThat(appointment.getProvider()).isEqualTo(newAppointmentRequest.getProvider());
+    }
+
+    @Test
+    @DisplayName("create throws BadRequestException when user is not found")
+    void create_ThrowsBadRequestException_WhenUserIsNotFound() {
+        BDDMockito.when(userRepositoryMock.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Optional.empty());
+
+        Assertions.assertThatExceptionOfType(BadRequestException.class)
+                .isThrownBy(() -> appointmentService.create(NewAppointmentRequestCreator.createNewAppointmentRequest()));
+    }
+
+    @Test
+    @DisplayName("create throws BadRequestException when provider is not found")
+    void create_ThrowsBadRequestException_WhenProviderIsNotFound() {
+        BDDMockito.when(providerRepositoryMock.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Optional.empty());
+
+        Assertions.assertThatExceptionOfType(BadRequestException.class)
+                .isThrownBy(() -> appointmentService.create(NewAppointmentRequestCreator.createNewAppointmentRequest()));
+    }
+
 
 }

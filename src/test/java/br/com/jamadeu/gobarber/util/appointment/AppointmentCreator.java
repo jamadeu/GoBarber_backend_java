@@ -1,8 +1,9 @@
-package br.com.jamadeu.gobarber.util;
+package br.com.jamadeu.gobarber.util.appointment;
 
 import br.com.jamadeu.gobarber.modules.appointment.domain.Appointment;
 import br.com.jamadeu.gobarber.modules.user.domain.GoBarberProvider;
 import br.com.jamadeu.gobarber.modules.user.domain.GoBarberUser;
+import br.com.jamadeu.gobarber.util.user.UserCreator;
 
 import java.time.LocalDateTime;
 

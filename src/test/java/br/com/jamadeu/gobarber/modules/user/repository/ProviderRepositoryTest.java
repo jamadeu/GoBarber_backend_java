@@ -1,7 +1,7 @@
 package br.com.jamadeu.gobarber.modules.user.repository;
 
 import br.com.jamadeu.gobarber.modules.user.domain.GoBarberProvider;
-import br.com.jamadeu.gobarber.util.UserCreator;
+import br.com.jamadeu.gobarber.util.user.UserCreator;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

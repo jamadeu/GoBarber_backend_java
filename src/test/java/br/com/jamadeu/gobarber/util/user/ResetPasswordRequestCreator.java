@@ -1,4 +1,4 @@
-package br.com.jamadeu.gobarber.util;
+package br.com.jamadeu.gobarber.util.user;
 
 import br.com.jamadeu.gobarber.modules.user.domain.GoBarberProvider;
 import br.com.jamadeu.gobarber.modules.user.domain.GoBarberUser;

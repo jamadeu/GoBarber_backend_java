@@ -3,7 +3,7 @@ package br.com.jamadeu.gobarber.shared.email.service;
 import br.com.jamadeu.gobarber.shared.exception.BadRequestException;
 import br.com.jamadeu.gobarber.modules.user.repository.UserRepository;
 import br.com.jamadeu.gobarber.util.SendForgotPasswordEmailRequestCreator;
-import br.com.jamadeu.gobarber.util.UserCreator;
+import br.com.jamadeu.gobarber.util.user.UserCreator;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
