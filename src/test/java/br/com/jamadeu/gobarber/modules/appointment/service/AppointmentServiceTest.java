@@ -57,6 +57,7 @@ class AppointmentServiceTest {
                 .thenReturn(appointmentPage);
         BDDMockito.when(appointmentRepositoryMock.save(ArgumentMatchers.any(Appointment.class)))
                 .thenReturn(AppointmentCreator.createValidAppointment());
+        BDDMockito.doNothing().when(appointmentRepositoryMock).delete(ArgumentMatchers.any(Appointment.class));
     }
 
     @Test
@@ -161,5 +162,11 @@ class AppointmentServiceTest {
                 .isThrownBy(() -> appointmentService.create(NewAppointmentRequestCreator.createNewAppointmentRequest()));
     }
 
+    @Test
+    @DisplayName("delete deletes appointment when successful")
+    void delete_DeletesUser_WhenSuccessful() {
+        Assertions.assertThatCode(() -> appointmentService.delete(1L))
+                .doesNotThrowAnyException();
+    }
 
 }
