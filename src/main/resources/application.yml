@@ -1,6 +1,6 @@
 server:
   error:
-    include-stacktrace: ALWAYS
+    include-stacktrace: ON_PARAM
 
 spring:
   datasource:

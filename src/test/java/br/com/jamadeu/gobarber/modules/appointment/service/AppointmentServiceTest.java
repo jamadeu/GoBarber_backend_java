@@ -2,6 +2,7 @@ package br.com.jamadeu.gobarber.modules.appointment.service;
 
 import br.com.jamadeu.gobarber.modules.appointment.domain.Appointment;
 import br.com.jamadeu.gobarber.modules.appointment.repository.AppointmentRepository;
+import br.com.jamadeu.gobarber.modules.user.domain.GoBarberProvider;
 import br.com.jamadeu.gobarber.modules.user.domain.GoBarberUser;
 import br.com.jamadeu.gobarber.modules.user.repository.ProviderRepository;
 import br.com.jamadeu.gobarber.modules.user.repository.UserRepository;
@@ -46,6 +47,11 @@ class AppointmentServiceTest {
                 .thenReturn(Optional.of(UserCreator.createValidUser()));
         BDDMockito.when(appointmentRepositoryMock.findByUser(
                 ArgumentMatchers.any(GoBarberUser.class), ArgumentMatchers.any(PageRequest.class)))
+                .thenReturn(appointmentPage);
+        BDDMockito.when(providerRepositoryMock.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Optional.of(UserCreator.createValidProvider()));
+        BDDMockito.when(appointmentRepositoryMock.findByProvider(
+                ArgumentMatchers.any(GoBarberProvider.class), ArgumentMatchers.any(PageRequest.class)))
                 .thenReturn(appointmentPage);
     }
 
@@ -93,6 +99,30 @@ class AppointmentServiceTest {
 
         Assertions.assertThatExceptionOfType(BadRequestException.class)
                 .isThrownBy(() -> appointmentService.findByUserId(1L));
+    }
+
+    @Test
+    @DisplayName("findByProviderId returns list of appointments inside page object when successful")
+    void findByProviderId_ReturnsListOfAppointmentsInsidePageObject_WhenSuccessful() {
+        GoBarberProvider provider = UserCreator.createValidProvider();
+        Page<Appointment> appointmentPage = appointmentService.findByProviderId(provider.getId());
+
+        Assertions.assertThat(appointmentPage).isNotNull();
+        Assertions.assertThat(appointmentPage.toList())
+                .isNotEmpty()
+                .hasSize(1);
+        Assertions.assertThat(appointmentPage.toList().get(0).getProvider())
+                .isEqualTo(provider);
+    }
+
+    @Test
+    @DisplayName("findByProviderId throws BadRequestException when user is not found")
+    void findByProviderId_ThrowsBadRequestException_WhenUserIsNotFound() {
+        BDDMockito.when(providerRepositoryMock.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Optional.empty());
+
+        Assertions.assertThatExceptionOfType(BadRequestException.class)
+                .isThrownBy(() -> appointmentService.findByProviderId(1L));
     }
 
 }
