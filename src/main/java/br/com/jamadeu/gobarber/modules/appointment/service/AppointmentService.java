@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +40,7 @@ public class AppointmentService {
         return appointmentRepository.findByProvider(provider, PageRequest.of(0, 5));
     }
 
+    @Transactional
     public Appointment create(NewAppointmentRequest newAppointmentRequest) {
         if (userRepository.findById(newAppointmentRequest.getUser().getId()).isEmpty()) {
             throw new BadRequestException("User not found");
@@ -47,5 +49,10 @@ public class AppointmentService {
             throw new BadRequestException("Provider not found");
         }
         return appointmentRepository.save(AppointmentMapper.INSTANCE.toAppointment(newAppointmentRequest));
+    }
+
+    @Transactional
+    public void delete(Long id){
+        appointmentRepository.delete(findByIdOrThrowBadRequestException(id));
     }
 }
