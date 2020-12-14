@@ -23,17 +23,23 @@ public class AppointmentController {
     }
 
     @GetMapping("/find-by-user/{userId}")
-    public ResponseEntity<Page<Appointment>> findByUserId(@PathVariable Long userId){
+    public ResponseEntity<Page<Appointment>> findByUserId(@PathVariable Long userId) {
         return new ResponseEntity<>(appointmentService.findByUserId(userId), HttpStatus.OK);
     }
 
     @GetMapping("/find-by-provider/{providerId}")
-    public ResponseEntity<Page<Appointment>> findByProviderId(@PathVariable Long providerId){
+    public ResponseEntity<Page<Appointment>> findByProviderId(@PathVariable Long providerId) {
         return new ResponseEntity<>(appointmentService.findByProviderId(providerId), HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<Appointment> create(@RequestBody @Valid NewAppointmentRequest newAppointmentRequest){
+    public ResponseEntity<Appointment> create(@RequestBody @Valid NewAppointmentRequest newAppointmentRequest) {
         return new ResponseEntity<>(appointmentService.create(newAppointmentRequest), HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        appointmentService.delete(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
