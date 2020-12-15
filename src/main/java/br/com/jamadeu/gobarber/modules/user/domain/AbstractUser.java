@@ -26,25 +26,30 @@ public abstract class AbstractUser implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "This is the user's id")
     private Long id;
 
     @NotEmpty(message = "The user name can not be empty")
     @Column(nullable = false)
+    @Schema(description = "This is the user's name")
     private String name;
 
     @NotEmpty(message = "The user username can not be empty")
     @Column(nullable = false, unique = true)
+    @Schema(description = "This is the user's username")
     private String username;
 
     @NotEmpty(message = "The user email can not be empty")
     @Email(message = "The user email must be in a valid email format")
     @Column(nullable = false, unique = true)
+    @Schema(description = "This is the user's email")
     private String email;
 
     @NotEmpty(message = "The user password can not be empty")
     @Size(min = 6, message = "The user password must be at least 6 characters")
     @Column(nullable = false)
     @JsonIgnore
+    @Schema(description = "This is the user's password")
     private String password;
 
     @Schema(description = "This is the user's avatar",

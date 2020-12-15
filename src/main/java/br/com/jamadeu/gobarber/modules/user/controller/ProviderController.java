@@ -88,6 +88,13 @@ public class ProviderController {
     }
 
     @PutMapping(path = "/reset-password")
+    @Operation(summary = "Change user's password",
+            tags = {"users"}
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Successful operation"),
+            @ApiResponse(responseCode = "400", description = "When user not found")
+    })
     public ResponseEntity<Void> resetPassword(@RequestBody @Valid ResetPasswordRequest resetPasswordRequest) {
         providerService.resetPassword(resetPasswordRequest);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
