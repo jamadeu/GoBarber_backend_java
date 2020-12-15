@@ -53,7 +53,7 @@ public class AppointmentService {
     }
 
     @Transactional
-    public void delete(Long id){
+    public void delete(Long id) {
         appointmentRepository.delete(findByIdOrThrowBadRequestException(id));
     }
 
@@ -61,12 +61,12 @@ public class AppointmentService {
     public void replace(ReplaceAppointmentRequest replaceAppointmentRequest) {
         Appointment appointmentToReplace = AppointmentMapper.INSTANCE.toAppointment(replaceAppointmentRequest);
         Appointment appointmentSaved = findByIdOrThrowBadRequestException(appointmentToReplace.getId());
-        if(!appointmentToReplace.getUser().equals(appointmentSaved.getUser()) &&
-            userRepository.findById(appointmentToReplace.getUser().getId()).isEmpty()){
+        if (!appointmentToReplace.getUser().getUsername().equals(appointmentSaved.getUser().getUsername()) &&
+                userRepository.findById(appointmentToReplace.getUser().getId()).isEmpty()) {
             throw new BadRequestException("User not found");
         }
-        if(!appointmentToReplace.getProvider().equals(appointmentSaved.getProvider()) &&
-                providerRepository.findById(appointmentToReplace.getProvider().getId()).isEmpty()){
+        if (!appointmentToReplace.getProvider().getUsername().equals(appointmentSaved.getProvider().getUsername()) &&
+                providerRepository.findById(appointmentToReplace.getProvider().getId()).isEmpty()) {
             throw new BadRequestException("Provider not found");
         }
         appointmentRepository.save(appointmentToReplace);

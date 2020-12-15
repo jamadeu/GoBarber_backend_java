@@ -3,6 +3,7 @@ package br.com.jamadeu.gobarber.modules.appointment.service;
 import br.com.jamadeu.gobarber.modules.appointment.domain.Appointment;
 import br.com.jamadeu.gobarber.modules.appointment.repository.AppointmentRepository;
 import br.com.jamadeu.gobarber.modules.appointment.requests.NewAppointmentRequest;
+import br.com.jamadeu.gobarber.modules.appointment.requests.ReplaceAppointmentRequest;
 import br.com.jamadeu.gobarber.modules.user.domain.GoBarberProvider;
 import br.com.jamadeu.gobarber.modules.user.domain.GoBarberUser;
 import br.com.jamadeu.gobarber.modules.user.repository.ProviderRepository;
@@ -10,6 +11,7 @@ import br.com.jamadeu.gobarber.modules.user.repository.UserRepository;
 import br.com.jamadeu.gobarber.shared.exception.BadRequestException;
 import br.com.jamadeu.gobarber.util.appointment.AppointmentCreator;
 import br.com.jamadeu.gobarber.util.appointment.NewAppointmentRequestCreator;
+import br.com.jamadeu.gobarber.util.appointment.ReplaceAppointmentRequestCreator;
 import br.com.jamadeu.gobarber.util.user.UserCreator;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -133,13 +135,13 @@ class AppointmentServiceTest {
     @Test
     @DisplayName("create returns an appointment when successful")
     void create_ReturnsAppointment_WhenSuccessful() {
-        NewAppointmentRequest newAppointmentRequest = NewAppointmentRequestCreator.createNewAppointmentRequest();
-        Appointment appointment = appointmentService.create(newAppointmentRequest);
+        NewAppointmentRequest request = NewAppointmentRequestCreator.createNewAppointmentRequest();
+        Appointment appointment = appointmentService.create(request);
 
         Assertions.assertThat(appointment).isNotNull();
         Assertions.assertThat(appointment.getId()).isNotNull();
-        Assertions.assertThat(appointment.getUser()).isEqualTo(newAppointmentRequest.getUser());
-        Assertions.assertThat(appointment.getProvider()).isEqualTo(newAppointmentRequest.getProvider());
+        Assertions.assertThat(appointment.getUser()).isEqualTo(request.getUser());
+        Assertions.assertThat(appointment.getProvider()).isEqualTo(request.getProvider());
     }
 
     @Test
@@ -147,9 +149,10 @@ class AppointmentServiceTest {
     void create_ThrowsBadRequestException_WhenUserIsNotFound() {
         BDDMockito.when(userRepositoryMock.findById(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.empty());
+        NewAppointmentRequest request = NewAppointmentRequestCreator.createNewAppointmentRequest();
 
         Assertions.assertThatExceptionOfType(BadRequestException.class)
-                .isThrownBy(() -> appointmentService.create(NewAppointmentRequestCreator.createNewAppointmentRequest()));
+                .isThrownBy(() -> appointmentService.create(request));
     }
 
     @Test
@@ -157,9 +160,10 @@ class AppointmentServiceTest {
     void create_ThrowsBadRequestException_WhenProviderIsNotFound() {
         BDDMockito.when(providerRepositoryMock.findById(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.empty());
+        NewAppointmentRequest request = NewAppointmentRequestCreator.createNewAppointmentRequest();
 
         Assertions.assertThatExceptionOfType(BadRequestException.class)
-                .isThrownBy(() -> appointmentService.create(NewAppointmentRequestCreator.createNewAppointmentRequest()));
+                .isThrownBy(() -> appointmentService.create(request));
     }
 
     @Test
@@ -167,6 +171,42 @@ class AppointmentServiceTest {
     void delete_DeletesUser_WhenSuccessful() {
         Assertions.assertThatCode(() -> appointmentService.delete(1L))
                 .doesNotThrowAnyException();
+    }
+
+    @Test
+    @DisplayName("replace update appointment when successful")
+    void replace_UpdateAppointment_WhenSuccessful() {
+        ReplaceAppointmentRequest request = ReplaceAppointmentRequestCreator.createReplaceAppointmentRequest();
+        Assertions.assertThatCode(() -> appointmentService.replace(request))
+                .doesNotThrowAnyException();
+    }
+
+    @Test
+    @DisplayName("replace throws BadRequestException when user is not found")
+    void replace_ThrowsBadRequestException_WhenUserIsNotFound() {
+        BDDMockito.when(userRepositoryMock.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Optional.empty());
+        ReplaceAppointmentRequest request = ReplaceAppointmentRequestCreator.createReplaceAppointmentRequest();
+        GoBarberUser user = UserCreator.createValidUser();
+        user.setUsername("another_user");
+        request.setUser(user);
+
+        Assertions.assertThatExceptionOfType(BadRequestException.class)
+                .isThrownBy(() -> appointmentService.replace(request));
+    }
+
+    @Test
+    @DisplayName("replace throws BadRequestException when provider is not found")
+    void replace_ThrowsBadRequestException_WhenProviderIsNotFound() {
+        BDDMockito.when(providerRepositoryMock.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Optional.empty());
+        ReplaceAppointmentRequest request = ReplaceAppointmentRequestCreator.createReplaceAppointmentRequest();
+        GoBarberProvider provider = UserCreator.createValidProvider();
+        provider.setUsername("another_provider");
+        request.setProvider(provider);
+
+        Assertions.assertThatExceptionOfType(BadRequestException.class)
+                .isThrownBy(() -> appointmentService.replace(request));
     }
 
 }
