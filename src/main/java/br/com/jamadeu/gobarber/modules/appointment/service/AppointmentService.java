@@ -4,6 +4,7 @@ import br.com.jamadeu.gobarber.modules.appointment.domain.Appointment;
 import br.com.jamadeu.gobarber.modules.appointment.mapper.AppointmentMapper;
 import br.com.jamadeu.gobarber.modules.appointment.repository.AppointmentRepository;
 import br.com.jamadeu.gobarber.modules.appointment.requests.NewAppointmentRequest;
+import br.com.jamadeu.gobarber.modules.appointment.requests.ReplaceAppointmentRequest;
 import br.com.jamadeu.gobarber.modules.user.domain.GoBarberProvider;
 import br.com.jamadeu.gobarber.modules.user.domain.GoBarberUser;
 import br.com.jamadeu.gobarber.modules.user.repository.ProviderRepository;
@@ -54,5 +55,20 @@ public class AppointmentService {
     @Transactional
     public void delete(Long id){
         appointmentRepository.delete(findByIdOrThrowBadRequestException(id));
+    }
+
+    @Transactional
+    public void replace(ReplaceAppointmentRequest replaceAppointmentRequest) {
+        Appointment appointmentToReplace = AppointmentMapper.INSTANCE.toAppointment(replaceAppointmentRequest);
+        Appointment appointmentSaved = findByIdOrThrowBadRequestException(appointmentToReplace.getId());
+        if(!appointmentToReplace.getUser().equals(appointmentSaved.getUser()) &&
+            userRepository.findById(appointmentToReplace.getUser().getId()).isEmpty()){
+            throw new BadRequestException("User not found");
+        }
+        if(!appointmentToReplace.getProvider().equals(appointmentSaved.getProvider()) &&
+                providerRepository.findById(appointmentToReplace.getProvider().getId()).isEmpty()){
+            throw new BadRequestException("Provider not found");
+        }
+        appointmentRepository.save(appointmentToReplace);
     }
 }

@@ -2,6 +2,7 @@ package br.com.jamadeu.gobarber.modules.appointment.controller;
 
 import br.com.jamadeu.gobarber.modules.appointment.domain.Appointment;
 import br.com.jamadeu.gobarber.modules.appointment.requests.NewAppointmentRequest;
+import br.com.jamadeu.gobarber.modules.appointment.requests.ReplaceAppointmentRequest;
 import br.com.jamadeu.gobarber.modules.appointment.service.AppointmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -40,6 +41,12 @@ public class AppointmentController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         appointmentService.delete(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PutMapping
+    public ResponseEntity<Void> replace(@RequestBody @Valid ReplaceAppointmentRequest replaceAppointmentRequest){
+        appointmentService.replace(replaceAppointmentRequest);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

@@ -43,6 +43,7 @@ class AppointmentControllerTest {
                 .thenReturn(appointmentPage);
         BDDMockito.when(appointmentServiceMock.create(ArgumentMatchers.any(NewAppointmentRequest.class)))
                 .thenReturn(AppointmentCreator.createValidAppointment());
+        BDDMockito.doNothing().when(appointmentServiceMock).delete(ArgumentMatchers.anyLong());
     }
 
     @Test
@@ -98,6 +99,17 @@ class AppointmentControllerTest {
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         Assertions.assertThat(appointment).isNotNull();
         Assertions.assertThat(appointment.getId()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("delete deletes appointment when successful")
+    void delete_DeletesUser_WhenSuccessful() {
+        Assertions.assertThatCode(() -> appointmentController.delete(1L))
+                .doesNotThrowAnyException();
+        ResponseEntity<Void> responseEntity = appointmentController.delete(1L);
+
+        Assertions.assertThat(responseEntity).isNotNull();
+        Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 
 }
