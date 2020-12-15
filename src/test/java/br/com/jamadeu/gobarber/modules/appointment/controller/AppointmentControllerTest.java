@@ -2,10 +2,12 @@ package br.com.jamadeu.gobarber.modules.appointment.controller;
 
 import br.com.jamadeu.gobarber.modules.appointment.domain.Appointment;
 import br.com.jamadeu.gobarber.modules.appointment.requests.NewAppointmentRequest;
+import br.com.jamadeu.gobarber.modules.appointment.requests.ReplaceAppointmentRequest;
 import br.com.jamadeu.gobarber.modules.appointment.service.AppointmentService;
 import br.com.jamadeu.gobarber.modules.user.domain.GoBarberUser;
 import br.com.jamadeu.gobarber.util.appointment.AppointmentCreator;
 import br.com.jamadeu.gobarber.util.appointment.NewAppointmentRequestCreator;
+import br.com.jamadeu.gobarber.util.appointment.ReplaceAppointmentRequestCreator;
 import br.com.jamadeu.gobarber.util.user.UserCreator;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,6 +46,7 @@ class AppointmentControllerTest {
         BDDMockito.when(appointmentServiceMock.create(ArgumentMatchers.any(NewAppointmentRequest.class)))
                 .thenReturn(AppointmentCreator.createValidAppointment());
         BDDMockito.doNothing().when(appointmentServiceMock).delete(ArgumentMatchers.anyLong());
+        BDDMockito.doNothing().when(appointmentServiceMock).replace(ArgumentMatchers.any(ReplaceAppointmentRequest.class));
     }
 
     @Test
@@ -104,12 +107,20 @@ class AppointmentControllerTest {
     @Test
     @DisplayName("delete deletes appointment when successful")
     void delete_DeletesUser_WhenSuccessful() {
-        Assertions.assertThatCode(() -> appointmentController.delete(1L))
-                .doesNotThrowAnyException();
-        ResponseEntity<Void> responseEntity = appointmentController.delete(1L);
+        ResponseEntity<Void> response = appointmentController.delete(1L);
 
-        Assertions.assertThat(responseEntity).isNotNull();
-        Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+        Assertions.assertThat(response).isNotNull();
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    }
+
+    @Test
+    @DisplayName("replace updates appointment when successful")
+    void replace_UpdatesAppointment_WhenSuccessful() {
+        ReplaceAppointmentRequest request = ReplaceAppointmentRequestCreator.createReplaceAppointmentRequest();
+        ResponseEntity<Void> response = appointmentController.replace(request);
+
+        Assertions.assertThat(response).isNotNull();
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 
 }
