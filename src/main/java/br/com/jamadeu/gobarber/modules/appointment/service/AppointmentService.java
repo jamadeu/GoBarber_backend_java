@@ -24,8 +24,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class AppointmentService {
-    private static final String USER_NOT_FOUND_MESSAGE = "User not found";
-    private static final String PROVIDER_NOT_FOUND_MESSAGE = "Provider not found";
     private final AppointmentRepository appointmentRepository;
     private final UserRepository userRepository;
     private final ProviderRepository providerRepository;
@@ -37,25 +35,19 @@ public class AppointmentService {
     }
 
     public Page<Appointment> findByUserId(Long id) {
-        GoBarberUser user = userRepository.findById(id)
-                .orElseThrow(() -> new BadRequestException(USER_NOT_FOUND_MESSAGE));
+        GoBarberUser user = checkIfUserExists(id);
         return appointmentRepository.findByUser(user, PageRequest.of(0, 5));
     }
 
     public Page<Appointment> findByProviderId(Long id) {
-        GoBarberProvider provider = providerRepository.findById(id)
-                .orElseThrow(() -> new BadRequestException(PROVIDER_NOT_FOUND_MESSAGE));
+        GoBarberProvider provider = checkIfProviderExists(id);
         return appointmentRepository.findByProvider(provider, PageRequest.of(0, 5));
     }
 
     @Transactional
     public Appointment create(NewAppointmentRequest newAppointmentRequest) {
-        if (userRepository.findById(newAppointmentRequest.getUser().getId()).isEmpty()) {
-            throw new BadRequestException(USER_NOT_FOUND_MESSAGE);
-        }
-        if (providerRepository.findById(newAppointmentRequest.getProvider().getId()).isEmpty()) {
-            throw new BadRequestException(PROVIDER_NOT_FOUND_MESSAGE);
-        }
+        checkIfUserExists(newAppointmentRequest.getUser().getId());
+        checkIfProviderExists(newAppointmentRequest.getProvider().getId());
         return appointmentRepository.save(AppointmentMapper.INSTANCE.toAppointment(newAppointmentRequest));
     }
 
@@ -68,24 +60,31 @@ public class AppointmentService {
     public void replace(ReplaceAppointmentRequest replaceAppointmentRequest) {
         Appointment appointmentToReplace = AppointmentMapper.INSTANCE.toAppointment(replaceAppointmentRequest);
         Appointment appointmentSaved = findByIdOrThrowBadRequestException(appointmentToReplace.getId());
-        if (!appointmentToReplace.getUser().getUsername().equals(appointmentSaved.getUser().getUsername()) &&
-                userRepository.findById(appointmentToReplace.getUser().getId()).isEmpty()) {
-            throw new BadRequestException(USER_NOT_FOUND_MESSAGE);
+        if (!appointmentToReplace.getUser().getUsername().equals(appointmentSaved.getUser().getUsername())) {
+            checkIfUserExists(replaceAppointmentRequest.getUser().getId());
         }
-        if (!appointmentToReplace.getProvider().getUsername().equals(appointmentSaved.getProvider().getUsername()) &&
-                providerRepository.findById(appointmentToReplace.getProvider().getId()).isEmpty()) {
-            throw new BadRequestException(PROVIDER_NOT_FOUND_MESSAGE);
+        if (!appointmentToReplace.getProvider().getUsername().equals(appointmentSaved.getProvider().getUsername())) {
+            checkIfProviderExists(replaceAppointmentRequest.getProvider().getId());
         }
         appointmentRepository.save(appointmentToReplace);
     }
 
     public Page<Appointment> listAllProvidersAppointmentsByMonth(Long id, int month) {
-        GoBarberProvider provider = providerRepository.findById(id)
-                .orElseThrow(() -> new BadRequestException(PROVIDER_NOT_FOUND_MESSAGE));
+        GoBarberProvider provider = checkIfProviderExists(id);
         List<Appointment> appointments = appointmentRepository.findByProvider(provider);
         return new PageImpl<>(appointments.stream().filter(
                 appointment ->
                         appointment.getDate().getMonth().equals(Month.of(month))
         ).collect(Collectors.toList()));
+    }
+
+    private GoBarberUser checkIfUserExists(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new BadRequestException("User not found"));
+    }
+
+    private GoBarberProvider checkIfProviderExists(Long providerId) {
+        return providerRepository.findById(providerId)
+                .orElseThrow(() -> new BadRequestException("Provider not found"));
     }
 }
