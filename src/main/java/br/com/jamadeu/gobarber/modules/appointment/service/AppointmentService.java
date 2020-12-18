@@ -16,9 +16,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Month;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class AppointmentService {
+    private static final String USER_NOT_FOUND_MESSAGE = "User not found";
+    private static final String PROVIDER_NOT_FOUND_MESSAGE = "Provider not found";
     private final AppointmentRepository appointmentRepository;
     private final UserRepository userRepository;
     private final ProviderRepository providerRepository;
@@ -31,23 +37,23 @@ public class AppointmentService {
 
     public Page<Appointment> findByUserId(Long id) {
         GoBarberUser user = userRepository.findById(id)
-                .orElseThrow(() -> new BadRequestException("User not found"));
+                .orElseThrow(() -> new BadRequestException(USER_NOT_FOUND_MESSAGE));
         return appointmentRepository.findByUser(user, PageRequest.of(0, 5));
     }
 
     public Page<Appointment> findByProviderId(Long id) {
         GoBarberProvider provider = providerRepository.findById(id)
-                .orElseThrow(() -> new BadRequestException("Provider not found"));
+                .orElseThrow(() -> new BadRequestException(PROVIDER_NOT_FOUND_MESSAGE));
         return appointmentRepository.findByProvider(provider, PageRequest.of(0, 5));
     }
 
     @Transactional
     public Appointment create(NewAppointmentRequest newAppointmentRequest) {
         if (userRepository.findById(newAppointmentRequest.getUser().getId()).isEmpty()) {
-            throw new BadRequestException("User not found");
+            throw new BadRequestException(USER_NOT_FOUND_MESSAGE);
         }
         if (providerRepository.findById(newAppointmentRequest.getProvider().getId()).isEmpty()) {
-            throw new BadRequestException("Provider not found");
+            throw new BadRequestException(PROVIDER_NOT_FOUND_MESSAGE);
         }
         return appointmentRepository.save(AppointmentMapper.INSTANCE.toAppointment(newAppointmentRequest));
     }
@@ -63,12 +69,22 @@ public class AppointmentService {
         Appointment appointmentSaved = findByIdOrThrowBadRequestException(appointmentToReplace.getId());
         if (!appointmentToReplace.getUser().getUsername().equals(appointmentSaved.getUser().getUsername()) &&
                 userRepository.findById(appointmentToReplace.getUser().getId()).isEmpty()) {
-            throw new BadRequestException("User not found");
+            throw new BadRequestException(USER_NOT_FOUND_MESSAGE);
         }
         if (!appointmentToReplace.getProvider().getUsername().equals(appointmentSaved.getProvider().getUsername()) &&
                 providerRepository.findById(appointmentToReplace.getProvider().getId()).isEmpty()) {
-            throw new BadRequestException("Provider not found");
+            throw new BadRequestException(PROVIDER_NOT_FOUND_MESSAGE);
         }
         appointmentRepository.save(appointmentToReplace);
+    }
+
+    public List<Appointment> listAllProvidersAppointmentsByMonth(Long id, int month) {
+        GoBarberProvider provider = providerRepository.findById(id)
+                .orElseThrow(() -> new BadRequestException(PROVIDER_NOT_FOUND_MESSAGE));
+        Page<Appointment> appointments = appointmentRepository.findByProvider(provider, PageRequest.of(0, 1));
+        return appointments.stream().filter(
+                appointment ->
+                        appointment.getDate().getMonth().equals(Month.of(month))
+        ).collect(Collectors.toList());
     }
 }
