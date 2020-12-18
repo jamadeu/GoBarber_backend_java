@@ -12,6 +12,7 @@ import br.com.jamadeu.gobarber.modules.user.repository.UserRepository;
 import br.com.jamadeu.gobarber.shared.exception.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,13 +79,13 @@ public class AppointmentService {
         appointmentRepository.save(appointmentToReplace);
     }
 
-    public List<Appointment> listAllProvidersAppointmentsByMonth(Long id, int month) {
+    public Page<Appointment> listAllProvidersAppointmentsByMonth(Long id, int month) {
         GoBarberProvider provider = providerRepository.findById(id)
                 .orElseThrow(() -> new BadRequestException(PROVIDER_NOT_FOUND_MESSAGE));
-        Page<Appointment> appointments = appointmentRepository.findByProvider(provider, PageRequest.of(0, 1));
-        return appointments.stream().filter(
+        List<Appointment> appointments = appointmentRepository.findByProvider(provider);
+        return new PageImpl<>(appointments.stream().filter(
                 appointment ->
                         appointment.getDate().getMonth().equals(Month.of(month))
-        ).collect(Collectors.toList());
+        ).collect(Collectors.toList()));
     }
 }
