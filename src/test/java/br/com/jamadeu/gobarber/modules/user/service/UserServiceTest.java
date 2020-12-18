@@ -1,10 +1,11 @@
 package br.com.jamadeu.gobarber.modules.user.service;
 
-import br.com.jamadeu.gobarber.shared.exception.BadRequestException;
 import br.com.jamadeu.gobarber.modules.user.domain.GoBarberUser;
 import br.com.jamadeu.gobarber.modules.user.repository.UserRepository;
+import br.com.jamadeu.gobarber.modules.user.requests.NewUserRequest;
 import br.com.jamadeu.gobarber.modules.user.requests.ReplaceUserRequest;
 import br.com.jamadeu.gobarber.modules.user.requests.ResetPasswordRequest;
+import br.com.jamadeu.gobarber.shared.exception.BadRequestException;
 import br.com.jamadeu.gobarber.util.user.NewUserRequestCreator;
 import br.com.jamadeu.gobarber.util.user.ReplaceUserRequestCreator;
 import br.com.jamadeu.gobarber.util.user.ResetPasswordRequestCreator;
@@ -105,16 +106,19 @@ class UserServiceTest {
                 thenReturn(Optional.empty());
         BDDMockito.when(userRepositoryMock.findByEmail(ArgumentMatchers.anyString())).
                 thenReturn(Optional.of(UserCreator.createValidUser()));
+        NewUserRequest newUserRequest = NewUserRequestCreator.createNewUserRequest();
 
         Assertions.assertThatExceptionOfType(BadRequestException.class)
-                .isThrownBy(() -> userService.save(NewUserRequestCreator.createNewUserRequest()));
+                .isThrownBy(() -> userService.save(newUserRequest));
     }
 
     @Test
     @DisplayName("save returns status code 400 bad request when username is already in use")
     void save_ReturnsStatusCode400BadRequest_WhenUsernameIsAlreadyInUse() {
+        NewUserRequest newUserRequest = NewUserRequestCreator.createNewUserRequest();
+
         Assertions.assertThatExceptionOfType(BadRequestException.class)
-                .isThrownBy(() -> userService.save(NewUserRequestCreator.createNewUserRequest()));
+                .isThrownBy(() -> userService.save(newUserRequest));
     }
 
     @Test
@@ -129,9 +133,10 @@ class UserServiceTest {
     void replace_ReturnsStatusCode400BadRequest_WhenUserIsNotFound() {
         BDDMockito.when(userRepositoryMock.findById(ArgumentMatchers.anyLong())).
                 thenReturn(Optional.empty());
+        ReplaceUserRequest replaceUserRequest = ReplaceUserRequestCreator.createReplaceUserRequest();
 
         Assertions.assertThatExceptionOfType(BadRequestException.class)
-                .isThrownBy(() -> userService.replace(ReplaceUserRequestCreator.createReplaceUserRequest()));
+                .isThrownBy(() -> userService.replace(replaceUserRequest));
     }
 
     @Test
