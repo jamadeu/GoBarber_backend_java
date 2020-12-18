@@ -24,6 +24,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @ExtendWith(SpringExtension.class)
@@ -42,6 +43,9 @@ class AppointmentControllerTest {
         BDDMockito.when(appointmentServiceMock.findByUserId(ArgumentMatchers.anyLong()))
                 .thenReturn(appointmentPage);
         BDDMockito.when(appointmentServiceMock.findByProviderId(ArgumentMatchers.anyLong()))
+                .thenReturn(appointmentPage);
+        BDDMockito.when(appointmentServiceMock.listAllProvidersAppointmentsByMonth(
+                ArgumentMatchers.anyLong(), ArgumentMatchers.anyInt()))
                 .thenReturn(appointmentPage);
         BDDMockito.when(appointmentServiceMock.create(ArgumentMatchers.any(NewAppointmentRequest.class)))
                 .thenReturn(AppointmentCreator.createValidAppointment());
@@ -82,6 +86,22 @@ class AppointmentControllerTest {
     void findByProviderId_ReturnsListOfAppointmentsInsidePageObject_WhenSuccessful() {
         Appointment appointment = AppointmentCreator.createValidAppointment();
         ResponseEntity<Page<Appointment>> response = appointmentController.findByProviderId(1L);
+        Page<Appointment> appointmentPage = response.getBody();
+
+
+        Assertions.assertThat(response).isNotNull();
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Assertions.assertThat(appointmentPage).isNotNull().hasSize(1);
+        Assertions.assertThat(appointmentPage.toList().get(0)).isNotNull().isEqualTo(appointment);
+    }
+
+    @Test
+    @DisplayName("findAllProviderAppointmentsByMonth returns list of appointments inside page object when successful")
+    void findAllProviderAppointmentsByMonth_ReturnsListOfAppointmentsInsidePageObject_WhenSuccessful() {
+        Appointment appointment = AppointmentCreator.createValidAppointment();
+        int month = LocalDateTime.now().getMonth().getValue();
+        ResponseEntity<Page<Appointment>> response = appointmentController
+                .findAllProviderAppointmentsByMonth(1L, month);
         Page<Appointment> appointmentPage = response.getBody();
 
 
