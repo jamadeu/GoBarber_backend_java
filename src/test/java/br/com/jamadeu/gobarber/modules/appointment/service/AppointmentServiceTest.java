@@ -27,6 +27,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.time.DateTimeException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,6 +62,8 @@ class AppointmentServiceTest {
         BDDMockito.when(appointmentRepositoryMock.save(ArgumentMatchers.any(Appointment.class)))
                 .thenReturn(AppointmentCreator.createValidAppointment());
         BDDMockito.doNothing().when(appointmentRepositoryMock).delete(ArgumentMatchers.any(Appointment.class));
+        BDDMockito.when(appointmentRepositoryMock.findByProvider(ArgumentMatchers.any(GoBarberProvider.class)))
+                .thenReturn(List.of(AppointmentCreator.createValidAppointment()));
     }
 
     @Test
@@ -207,6 +211,35 @@ class AppointmentServiceTest {
 
         Assertions.assertThatExceptionOfType(BadRequestException.class)
                 .isThrownBy(() -> appointmentService.replace(request));
+    }
+
+    @Test
+    @DisplayName("listAllProvidersAppointmentsByMonth returns list of appointments inside page object when successful")
+    void listAllProvidersAppointmentsByMonth_ReturnsPageOfAppointments_WhenSuccessful() {
+        int month = LocalDateTime.now().getMonth().getValue();
+        Page<Appointment> appointments = appointmentService.listAllProvidersAppointmentsByMonth(1L, month);
+
+        Assertions.assertThat(appointments).isNotNull();
+        Assertions.assertThat(appointments.toList().get(0))
+                .isEqualTo(AppointmentCreator.createValidAppointment());
+    }
+
+    @Test
+    @DisplayName("listAllProvidersAppointmentsByMonth throws BadRequestException when provider is not found")
+    void listAllProvidersAppointmentsByMonth_ThrowsBadRequestException_WhenProviderIsNotFound() {
+        BDDMockito.when(providerRepositoryMock.findById(ArgumentMatchers.anyLong()))
+                .thenReturn(Optional.empty());
+        int month = LocalDateTime.now().getMonth().getValue();
+
+        Assertions.assertThatExceptionOfType(BadRequestException.class)
+                .isThrownBy(() -> appointmentService.listAllProvidersAppointmentsByMonth(1L, month));
+    }
+
+    @Test
+    @DisplayName("listAllProvidersAppointmentsByMonth throws DateTimeException when month is invalid")
+    void listAllProvidersAppointmentsByMonth_ThrowsDateTimeException_WhenMonthIsInvalid() {
+        Assertions.assertThatExceptionOfType(DateTimeException.class)
+                .isThrownBy(() -> appointmentService.listAllProvidersAppointmentsByMonth(1L, 13));
     }
 
 }
