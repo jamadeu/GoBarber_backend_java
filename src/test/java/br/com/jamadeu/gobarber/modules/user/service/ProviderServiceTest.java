@@ -2,6 +2,7 @@ package br.com.jamadeu.gobarber.modules.user.service;
 
 import br.com.jamadeu.gobarber.modules.user.domain.GoBarberProvider;
 import br.com.jamadeu.gobarber.modules.user.repository.ProviderRepository;
+import br.com.jamadeu.gobarber.modules.user.requests.NewProviderRequest;
 import br.com.jamadeu.gobarber.modules.user.requests.ReplaceProviderRequest;
 import br.com.jamadeu.gobarber.modules.user.requests.ResetPasswordRequest;
 import br.com.jamadeu.gobarber.shared.exception.BadRequestException;
@@ -105,16 +106,19 @@ class ProviderServiceTest {
                 thenReturn(Optional.empty());
         BDDMockito.when(providerRepositoryMock.findByEmail(ArgumentMatchers.anyString())).
                 thenReturn(Optional.of(UserCreator.createValidProvider()));
+        NewProviderRequest newProviderRequest = NewProviderRequestCreator.createNewProviderRequest();
 
         Assertions.assertThatExceptionOfType(BadRequestException.class)
-                .isThrownBy(() -> providerService.save(NewProviderRequestCreator.createNewProviderRequest()));
+                .isThrownBy(() -> providerService.save(newProviderRequest));
     }
 
     @Test
     @DisplayName("save returns status code 400 bad request when username is already in use")
     void save_ReturnsStatusCode400BadRequest_WhenUsernameIsAlreadyInUse() {
+        NewProviderRequest newProviderRequest = NewProviderRequestCreator.createNewProviderRequest();
+
         Assertions.assertThatExceptionOfType(BadRequestException.class)
-                .isThrownBy(() -> providerService.save(NewProviderRequestCreator.createNewProviderRequest()));
+                .isThrownBy(() -> providerService.save(newProviderRequest));
     }
 
     @Test
@@ -129,9 +133,10 @@ class ProviderServiceTest {
     void replace_ReturnsStatusCode400BadRequest_WhenProviderIsNotFound() {
         BDDMockito.when(providerRepositoryMock.findById(ArgumentMatchers.anyLong())).
                 thenReturn(Optional.empty());
+        ReplaceProviderRequest replaceProviderRequest = ReplaceProviderRequestCreator.createReplaceProviderRequest();
 
         Assertions.assertThatExceptionOfType(BadRequestException.class)
-                .isThrownBy(() -> providerService.replace(ReplaceProviderRequestCreator.createReplaceProviderRequest()));
+                .isThrownBy(() -> providerService.replace(replaceProviderRequest));
     }
 
     @Test
