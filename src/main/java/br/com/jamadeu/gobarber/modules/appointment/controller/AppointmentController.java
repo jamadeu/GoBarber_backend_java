@@ -49,6 +49,18 @@ public class AppointmentController {
         return new ResponseEntity<>(appointmentService.findByProviderId(providerId), HttpStatus.OK);
     }
 
+    @GetMapping("/find-by-provider/{providerId}/by-month/{month}")
+    @Operation(summary = "List all provider's appointments by month paginated",
+            tags = {"appointments"}
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "400", description = "When provider does not found")
+    })
+    public ResponseEntity<Page<Appointment>> findAllProviderAppointmentsByMonth(@PathVariable Long providerId, @PathVariable int month) {
+        return new ResponseEntity<>(appointmentService.listAllProvidersAppointmentsByMonth(providerId, month), HttpStatus.OK);
+    }
+
     @PostMapping
     @Operation(summary = "Create a new appointment",
             description = "all args are mandatory, date can not be past",
