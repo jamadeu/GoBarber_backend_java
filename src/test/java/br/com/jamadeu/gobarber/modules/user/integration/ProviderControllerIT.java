@@ -5,7 +5,6 @@ import br.com.jamadeu.gobarber.modules.user.repository.ProviderRepository;
 import br.com.jamadeu.gobarber.modules.user.requests.NewProviderRequest;
 import br.com.jamadeu.gobarber.modules.user.requests.ReplaceProviderRequest;
 import br.com.jamadeu.gobarber.modules.user.requests.ResetPasswordRequest;
-import br.com.jamadeu.gobarber.shared.wrapper.PageableResponse;
 import br.com.jamadeu.gobarber.util.user.NewProviderRequestCreator;
 import br.com.jamadeu.gobarber.util.user.ReplaceProviderRequestCreator;
 import br.com.jamadeu.gobarber.util.user.ResetPasswordRequestCreator;
@@ -22,7 +21,6 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -46,25 +44,6 @@ class ProviderControllerIT {
     private TestRestTemplate testRestTemplate;
     @Autowired
     private ProviderRepository providerRepository;
-
-    @Test
-    @DisplayName("listAll returns list of providers inside page object when successful")
-    void listAll_ReturnsListOfProvidersInsidePageObject_WhenSuccessful() {
-        String expectedName = providerRepository.save(UserCreator.createProviderToBeSaved()).getName();
-        providerRepository.save(USER);
-        PageableResponse<GoBarberProvider> providerPage = testRestTemplate.exchange(
-                "/providers",
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<PageableResponse<GoBarberProvider>>() {
-                }).getBody();
-
-        Assertions.assertThat(providerPage).isNotNull();
-        Assertions.assertThat(providerPage.toList())
-                .isNotEmpty()
-                .hasSize(2);
-        Assertions.assertThat(providerPage.toList().get(0).getName()).isEqualTo(expectedName);
-    }
 
     @Test
     @DisplayName("findById returns provider when successful")
@@ -228,23 +207,6 @@ class ProviderControllerIT {
 
         Assertions.assertThat(responseEntity).isNotNull();
         Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    }
-
-    @Test
-    @DisplayName("resetPassword updates provider password when successful")
-    void resetPassword_UpdatesProviderPassword_WhenSuccessful() {
-        providerRepository.save(UserCreator.createProviderToBeSavedWithPasswordEncoded());
-        providerRepository.save(USER);
-        ResetPasswordRequest resetPasswordRequest = ResetPasswordRequestCreator.createProviderResetPasswordRequest();
-        ResponseEntity<Void> responseEntity = testRestTemplate.exchange(
-                "/providers/reset-password",
-                HttpMethod.PUT,
-                new HttpEntity<>(resetPasswordRequest),
-                Void.class
-        );
-
-        Assertions.assertThat(responseEntity).isNotNull();
-        Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 
     @Test
